@@ -1,0 +1,14 @@
+
+{
+	"name": "SpringInn DevContainer",
+
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose-dev.yml"
+	],
+
+
+	"service": "app",
+	"workspaceFolder": "/app"
+
+}

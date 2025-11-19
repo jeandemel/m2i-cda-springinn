@@ -1,0 +1,9 @@
+services:
+ 
+  app:
+    build: !reset null
+    image: eclipse-temurin:25-jdk
+    volumes:
+      - .:/app
+    command: sleep infinity
+ 
