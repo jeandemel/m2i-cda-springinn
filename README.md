@@ -50,3 +50,43 @@ spring.datasource.url=jdbc:mariadb://database:3306/springinn?user=dev&password=1
 ```
 
 Pour lancer l'application, on utilise `docker compose up`
+
+
+## Entités
+
+```plantuml
+
+class Room {
+    id:string
+    number:string
+    capacity:int
+    price:double
+}
+
+class Booking {
+    id:string
+    startDate:LocalDate
+    duration:int
+    total:double
+    guestCount:int
+}
+
+class User {
+    id:string
+    email:string
+    password:string
+    role:string
+}
+class Customer extends User {
+    address:string
+    name:string
+    firstname:string
+    phoneNumber:string
+}
+
+
+Room "*" -- "*" Booking
+Booking "*" -- "1" Customer
+
+
+```
