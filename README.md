@@ -6,7 +6,7 @@ Projet de gestion d'hôtel avec des chambres et des réservations.
 * Docker / Conteneurisation
 * Couche Business
 
-## Conteneur d'exécution
+## Conteneur de déploiement
 * [Dockerfile](Dockerfile) qui définit un stage de build qui permet de générer le jar du projet ainsi qu'un stage d'exécution qui utilise ce jar pour lancer l'application (utiliser des stages permet de réduire la taille finale de l'image docker)
 
 * [docker-compose.yml](docker-compose.yml) qui charge le Dockerfile, expose les ports et va également définir un autre service/conteneur pour la base de données (ici mariadb)
@@ -51,7 +51,85 @@ spring.datasource.url=jdbc:mariadb://database:3306/springinn?user=dev&password=1
 
 Pour lancer l'application, on utilise `docker compose up`
 
+### Conteneur de développement
+Dans ce projet, on utilise l'extension et la spécification devcontainer de Microsoft (également disponible sur IntelliJ). Cet outil permet de créer un conteneur de développement dans lequel sera ouver l'IDE et qui permettra de développer directement à l'intérieur du conteneur, éliminant ainsi le besoin d'avoir l'environnement d'exécution et de dév installé sur sa machine, juste Docker est suffisant.
 
+Pour le mettre en place, on crée un dossier [.devcontainer](.devcontainer) avec un fichier [devcontainer.json](.devcontainer/devcontainer.json) et un fichier [docker-compose-dev.yml](.devcontainer/docker-compose-dev.yml)
+
+Techniquement on pourrait n'avoir que le fichier devcontainer.json et venir y décrire le conteneur à créer pour le développement, on peut y spécifier les images à utiliser, les ports à exposer etc.
+
+Dans notre cas, on est parti pour réutiliser une partie de notre environnement décrit dans le docker-compose.yml original dont on redéfini certaines partie avec le docker-compose-dev.yml
+
+Dans notre devcontainer.json, on vient donc indiquer qu'on charge les deux fichiers yml (attention à l'ordre, on charge le dev après l'original) et qu'on vient lancer VsCode dans le conteneur/service "app"
+
+`devcontainer.json`
+```json
+
+{
+  //Le nom du conteneur à créer
+	"name": "SpringInn DevContainer",
+  //Les fichier docker compose qui serviront pour la création du conteneur
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose-dev.yml"
+	],
+
+  //Le service/conteneur définit dans les docker-compose auquel on veut connecter vscode
+	"service": "app",
+  //le dossier du conteneur dans lequel on viendra positionner vscode, ici le nom du dossier qu'on expose au conteneur dans le docker-compose
+	"workspaceFolder": "/app"
+
+}
+
+```
+
+
+`docker-compose-dev.yml`
+```yml
+services:
+ 
+  app:
+    # on redéfinit le build pour ne pas utiliser notre DockerFile
+    build: !reset null
+    # à la place on part sur une image java
+    image: eclipse-temurin:25-jdk
+    #on expose notre code source dans le conteneur sous le dossier /app
+    volumes:
+      - .:/app
+    #on execute une commande pour que le conteneur ne se ferme pas automatiquement
+    command: sleep infinity
+```
+
+On peut également personnaliser le conteneur pour y installer certaines extensions vscode ou features : 
+
+
+```json
+
+{
+  //...reste de la config
+
+	"features": {
+		"ghcr.io/davzucky/devcontainers-features-wolfi/bash:1": {}, //installe /bin/bash dans le conteneur
+		"ghcr.io/devcontainers/features/git:1": { //install git dans le conteneur
+			"ppa": true,
+			"version": "system"
+		}
+		
+	},
+
+	
+	"customizations": {
+		"vscode": {
+      //Installe les extensions java, spring et un client mysql
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"cweijan.vscode-mysql-client2",
+				"vmware.vscode-boot-dev-pack"
+			]
+		}
+	}
+}
+```
 ## Entités
 
 ```plantuml

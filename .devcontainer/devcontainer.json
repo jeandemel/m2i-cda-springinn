@@ -7,8 +7,25 @@
 		"docker-compose-dev.yml"
 	],
 
+	"features": {
+		"ghcr.io/davzucky/devcontainers-features-wolfi/bash:1": {},
+		"ghcr.io/devcontainers/features/git:1": {
+			"ppa": true,
+			"version": "system"
+		}
+		
+	},
 
 	"service": "app",
-	"workspaceFolder": "/app"
+	"workspaceFolder": "/app",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"cweijan.vscode-mysql-client2",
+				"vmware.vscode-boot-dev-pack"
+			]
+		}
+	}
 
 }
