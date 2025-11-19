@@ -168,3 +168,17 @@ Booking "*" -- "1" Customer
 
 
 ```
+
+Nous avons donc un User qui servira pour les admins et les clients. Les clients sont représentés par la classe Customer qui hérite de User qui pourra avoir plusieurs réservations, ces réservations peuvent contenir une ou plusieurs chambres. On répète le total du prix dans la réservation pour prendre en compte les changements de prix futur des chambres. On utilisera le startDate et la duration des réservations pour déterminer quelles chambres sont libres ou non.
+
+## Architecture
+![Diagramme d'architecture](diagrammes/architecture-ntier.png)
+
+On part ici sur une architecture n-tiers dans laquelle on fait en sorte de bien séparer les différentes responsabilités: 
+* Les Entités et les Repositories ne s'occupent que de la persistence des données
+* Le Business utilise les repositories, certains services et les entités et contiendra le gros de l'algorithmie pour les différentes fonctionnalités de l'application, c'est dans cette couche que seront les règles métiers notamment
+* Les Services contiennent de l'algorithmie propre à l'infrastructure comme l'envoie de mail, la génération et validation de Tokens si on fait des JWT, etc.
+* Les Contrôleurs définissent les routes et les DTO d'entrée et de Sortie, se chargent du mapping et ne font appel qu'au business ou à certains services. Ils ne contiennent quasiment aucune algorithmie
+* On fait en sorte de définir des interfaces pour les Business et Service afin d'avoir les différentes couches qui dépendront d'abstractions plutôt que d'implémentation.
+
+
