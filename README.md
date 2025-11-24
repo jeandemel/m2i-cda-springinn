@@ -182,6 +182,54 @@ On part ici sur une architecture n-tiers dans laquelle on fait en sorte de bien 
 * On fait en sorte de définir des interfaces pour les Business et Service afin d'avoir les différentes couches qui dépendront d'abstractions plutôt que d'implémentation.
 
 
+## Spring Boot
+
+### Gestion globale des exceptions
+Spring boot en Web va catch automatiquement les RuntimeException qui ne sont pas catchées mais produira des erreurs HTTP 500.
+Comme notre Business throw des exceptions business lors de certains traitements, on va vouloir faire en sorte de catch ces exceptions dans la couche contrôleur afin de renvoyer les codes et messages d'erreurs pertinents.
+
+Première solution simple, mais qui alourdira beaucoup les contrôleurs : faire des try catch dans chaque méthode et y gérer l'exception :
+
+```java
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public DisplayRoomDTO add(@RequestBody @Valid CreateRoomDTO room) {
+      try {
+        
+        return mapper.toDisplay(
+            roomBusiness.createRoom(mapper.toEntity(room))
+        );
+      } catch (RoomNumberUnavaibleException e) {
+        throw new ResponseStatusExcpetion(HttpStatus.BAD_REQUEST, e.getMessage());
+      }
+        
+    }
+```
+
+Ça fonctionne, mais on va se retrouver à pas mal se répéter, notamment pour les NOT_FOUND.
+
+Spring Boot permet donc de créer des Controller Advice, qui sont des classes décorées avec une annotation spéciale qui permettront de définir des exception handlers : un comportement généralisée à avoir face à une exception ou une autre.
+
+Niveau organisation de ces handlers, on a le choix, on peut faire plusieurs classe ControllerAdvice selon les types d'exceptions ou d'entité par exemple, ou bien un ControllerAdvice pour tout le business comme ci dessous dans lequel on fait une méthode de handling par exception, il est également possible de regrouper plusieurs exceptions ensembles si elles ont un parent commun et résultat d'erreur similaire. (et enfin, on peut même techniquement faire un seul handler pour la classe parent qui ensuite fera des conditions pour définir l'erreur à renvoyer mais pour le coup, ça peut être un peu sale)
+
+```java
+@RestControllerAdvice
+public class BusinessExceptionController {
+
+    @ExceptionHandler(RoomNumberUnavaibleException.class)
+    public ProblemDetail roomNumberUnavailable(RoomNumberUnavaibleException exception) {
+        return ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ProblemDetail ressourcenotFound() {
+        return ProblemDetail
+        .forStatusAndDetail(HttpStatus.NOT_FOUND, "Ressource could not be found");
+    }
+}
+```
+
 
 
 ## Instructions
