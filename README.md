@@ -182,3 +182,14 @@ On part ici sur une architecture n-tiers dans laquelle on fait en sorte de bien 
 * On fait en sorte de définir des interfaces pour les Business et Service afin d'avoir les différentes couches qui dépendront d'abstractions plutôt que d'implémentation.
 
 
+
+
+## Instructions
+
+### Les DTO pour les routes Rooms existantes + mise en place des tests
+1. Installer MapStruct dans Maven avec la dépendance + le plugin
+2. Créer un ListRoomDTO avec id,number,price et capacity ainsi qu'un CreateRoomDTO avec number,price et capacity, les 3 obligatoires, le price et la capacity positifs
+3. Côté RoomController, venir faire les conversion d'entité à DTO et inversement. Le business ne connait pas les DTO, juste les entités.
+4. Créer une classe de test pour le RoomBusinessImpl en mode test unitaire, qui va donc créer un Mock pour le RoomRepository
+5. Par principe, faire un test de getRoomPage qui va juste vérifier que le findAll est appelé une fois (surtout pour voir si les tests passent au final)
+6. Faire 2 tests pour le createRoom un dans lequel on indique au mock du repository de renvoyé un optional empty lors de son find et dans lequel on vérifie que save a été appelé, et un dans lequel on dit au mock de renvoyer une valeur et alors il faudra tester qu'on a bien une exception du bon type levée
