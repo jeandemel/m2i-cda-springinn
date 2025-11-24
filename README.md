@@ -193,3 +193,13 @@ On part ici sur une architecture n-tiers dans laquelle on fait en sorte de bien 
 4. Créer une classe de test pour le RoomBusinessImpl en mode test unitaire, qui va donc créer un Mock pour le RoomRepository et une instance de RoomBusinessImpl auquel on donne le mock à manger (soit en faisant une instance à la mano, soit en utilisant un @InjectMocks sur la propriété)
 5. Par principe, faire un test de getRoomPage qui va juste vérifier que le findAll est appelé une fois (surtout pour voir si les tests passent au final)
 6. Faire 2 tests pour le createRoom un dans lequel on indique au mock du repository de renvoyer un optional empty lors de son find et dans lequel on vérifie que save a été appelé, et un dans lequel on dit au mock de renvoyer une valeur et alors il faudra tester qu'on a bien une exception du bon type levée
+
+
+### Le reste du CRUD pour la Room
+1. Mettre à jour l'implémentation du RoomBusiness pour y ajouter les trois méthodes : getOneRoom, deleteRoom, updateRoom
+2. Les trois vont appeler le findOne() avec un orElseThrow() (qui est du coup catché et traité dans notre BusinessExceptionController)
+3. Pour le getOneRoom, rien de particulier, juste on appel le find avec son orelse
+4. Pour le delete, on fait la mếme, mais ensuite on le delete et pareil pour l'update qui va juste refaire la vérification du room number avant d'update
+5. Côté contrôleur, on rajoute les 3 méthodes et un UpdateRoomDTO avec les 3 propriétés mais qui peuvent toutes être null ce coup ci
+6. On modifie le mapper pour y ajouter le apply et on fait les mapping dans le contrôleur
+7. Côté test, soit en unitaire, soit en fonctionnel, soit les deux, on vérifie que nos méthodes se comportent comme il faut en vérifiant si le delete ou le save sont appelés. Et dans la partie fonctionnelle, on peut vérifier les status http selon ce qu'on donne comme url

@@ -8,4 +8,7 @@ import fr.m2i.cda.springinn.entity.Room;
 public interface RoomBusiness {
     Page<Room> getRoomPage(Pageable pageable);
     Room createRoom(Room room);
+    Room getOneRoom(String id);
+    void deleteRoom(String id);
+    void updateRoom(Room room);
 }
