@@ -10,5 +10,7 @@ public interface RoomBusiness {
     Room createRoom(Room room);
     Room getOneRoom(String id);
     void deleteRoom(String id);
-    void updateRoom(Room room);
+    Room updateRoom(Room room);
+    //Avoir les deux update c'est pas génial, mais c'est juste pour avoir les deux possibilités via put ou patch
+    Room fullUpdate(Room room);
 }

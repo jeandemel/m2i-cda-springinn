@@ -1,11 +1,13 @@
 package fr.m2i.cda.springinn.business.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,8 @@ public class RoomBusinessImplTest {
     void createRoomShouldCallSaveOnAvailableNumber() {
         Room toCreate = new Room();
         toCreate.setNumber("test");
-        // On dit au mock de renvoyer un optional vide pour ne pas passer dans le if qui throw
+        // On dit au mock de renvoyer un optional vide pour ne pas passer dans le if qui
+        // throw
         when(repo.findByNumber("test")).thenReturn(Optional.empty());
         // On appel la méthode
         instance.createRoom(toCreate);
@@ -55,5 +58,57 @@ public class RoomBusinessImplTest {
         when(repo.findByNumber("test")).thenReturn(Optional.of(new Room()));
 
         assertThrows(RoomNumberUnavaibleException.class, () -> instance.createRoom(toCreate));
+    }
+
+    @Test
+    void updateRoomShouldCallSaveOnAvailableNumber() {
+        Room toUpdate = new Room();
+        toUpdate.setNumber("test");
+        // On dit au mock de renvoyer un optional vide pour ne pas passer dans le if qui
+        // throw
+        when(repo.findByNumber("test")).thenReturn(Optional.empty());
+        // On appel la méthode
+        instance.updateRoom(toUpdate);
+        // On s'attend à ce que le save du repo ait été appelé
+        verify(repo, times(1)).save(toUpdate);
+    }
+
+    @Test
+    void updateRoomShouldThrowOnNumberUnavailable() {
+        Room toUpdate = new Room();
+        toUpdate.setNumber("test");
+        // On dit au mock de renvoyer un optional plein pour provoquer le throw
+        when(repo.findByNumber("test")).thenReturn(Optional.of(new Room()));
+
+        assertThrows(RoomNumberUnavaibleException.class, () -> instance.updateRoom(toUpdate));
+    }
+
+    @Test
+    void getOneShouldReturnARoom() {
+        Room expected = new Room();
+        when(repo.findById("test")).thenReturn(Optional.of(expected));
+
+        assertEquals(expected, instance.getOneRoom("test"));
+        verify(repo, times(1)).findById("test");
+
+    }
+
+    @Test
+    void getOneShouldThrowIfNoRoom() {
+
+        when(repo.findById("test")).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> instance.getOneRoom("test"));
+
+    }
+
+
+
+    @Test
+    void deleteShouldCallDelete() {
+        Room toDelete = new Room();
+        when(repo.findById("test")).thenReturn(Optional.of(toDelete));
+        instance.deleteRoom("test");
+        verify(repo, times(1)).delete(toDelete);
     }
 }

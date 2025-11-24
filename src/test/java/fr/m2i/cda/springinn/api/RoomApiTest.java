@@ -1,6 +1,8 @@
 package fr.m2i.cda.springinn.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,5 +77,79 @@ public class RoomApiTest {
         """))
         .andExpect(status().isBadRequest());
    }
+
+
+    @Test
+    void getOneShouldReturnRoom() throws Exception {
+        mvc.perform(get("/api/room/room1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value("room1"))
+        .andExpect(jsonPath("$.number").value("A1"));
+
+    }
+
+    @Test
+    void getOneShouldThrow404IfNoRoom() throws Exception {
+        mvc.perform(get("/api/room/room100"))
+        .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void deleteShouldThrow404IfNoRoom() throws Exception {
+        mvc.perform(delete("/api/room/room100"))
+        .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void patchShouldThrow404IfNoRoom() throws Exception {
+        mvc.perform(patch("/api/room/room100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {
+                "capacity":2,
+                "price":100
+            }
+        """))
+        .andExpect(status().isNotFound());
+
+    }
+
+
+
+    @Test
+    void deleteShouldNotThrow() throws Exception {
+        mvc.perform(delete("/api/room/room1"))
+        .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    void patchShouldNotThrow() throws Exception {
+        mvc.perform(patch("/api/room/room1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {
+                "capacity":2,
+                "price":100
+            }
+        """))
+        .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void patchShouldThrowIfExistingNumber() throws Exception {
+        mvc.perform(patch("/api/room/room1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("""
+            {
+                "number":"B1"
+            }
+        """))
+        .andExpect(status().isBadRequest());
+
+    }
 
 }

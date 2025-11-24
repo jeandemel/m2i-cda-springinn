@@ -25,8 +25,52 @@ public class RoomBusinessImpl implements RoomBusiness{
 
     @Override
     public Room createRoom(Room room) {
+        throwIfExists(room);
+        roomRepo.save(room);
+        return room;
+    }
+
+    private void throwIfExists(Room room) {
         if(roomRepo.findByNumber(room.getNumber()).isPresent()) {
             throw new RoomNumberUnavaibleException("Room "+room.getNumber()+" already exists");
+        }
+    }
+
+    @Override
+    public Room getOneRoom(String id) {        
+        return roomRepo.findById(id).orElseThrow();
+    }
+
+    @Override
+    public void deleteRoom(String id) {
+        
+        Room room = getOneRoom(id);
+        roomRepo.delete(room);
+    }
+
+    @Override
+    public Room updateRoom(Room room) {
+        Room existing = getOneRoom(room.getId());
+        if(room.getNumber() !=null && !existing.getNumber().equals(room.getNumber())) {
+            throwIfExists(room);
+            existing.setNumber(room.getNumber());
+        }
+        if(room.getCapacity() != null) {
+            existing.setCapacity(room.getCapacity());
+        }
+        if(room.getPrice() != null) {
+            existing.setPrice(room.getPrice());
+        }
+
+        roomRepo.save(existing);
+        return existing;
+    }
+
+    @Override
+    public Room fullUpdate(Room room) {
+        Room existing = getOneRoom(room.getId());
+        if(!existing.getNumber().equals(room.getNumber())) {
+            throwIfExists(room);
         }
         roomRepo.save(room);
         return room;
