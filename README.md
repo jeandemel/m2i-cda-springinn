@@ -251,3 +251,28 @@ public class BusinessExceptionController {
 5. Côté contrôleur, on rajoute les 3 méthodes et un UpdateRoomDTO avec les 3 propriétés mais qui peuvent toutes être null ce coup ci
 6. On modifie le mapper pour y ajouter le apply et on fait les mapping dans le contrôleur
 7. Côté test, soit en unitaire, soit en fonctionnel, soit les deux, on vérifie que nos méthodes se comportent comme il faut en vérifiant si le delete ou le save sont appelés. Et dans la partie fonctionnelle, on peut vérifier les status http selon ce qu'on donne comme url
+
+### Admin des room
+#### Affichage des rooms
+1. Créer une nouvelle page src/app/admin/room/page.tsx
+2. Créer un component src/components/feature/admin/rooms-table.tsx dans lequel on va utiliser la Data Table de Antd pour afficher la liste des room.
+3. On vient créer un lib/api/types.ts dans lequel on crée nos types correspondant aux DTO de notre back
+4. Créer un lib/api/room-api.ts dans lequel on vient créer une fonction fetchRoomPage où on lance un axios.get vers notre /api/room et qui va donc récupérer un Page<DisplayRoom>
+5. Dans le rooms-table.tsx on vient rajouter une Props de type Page<DisplayRoom>
+6. Dans le room/page.tsx on fait notre requête fetchRoomPage et on donne le résultat à notre RoomsTable
+7. dans le RoomsTable, on vient définir un tableau représentant la définition des columns à afficher : `[{title:'Number', dataIndex:'number', key:'number'},{title:'Capacity', dataIndex:'capacity', key:'capacity'},{title:'Price', dataIndex:'price', key:'price'}]`
+8. On donne les columns et les data (la props) au composant Table
+
+#### Ajout d'une room via une modal
+1. Dans le room/page.tsx, rajouter le typage PageProps et récupérer les searchParams
+2. Dans les searchParams on va récupérer spécifiquement une variable newRoom et dans le template, faire que si elle est truthy on affiche une Modal, sinon on l'affiche pas (la Modal a une propriété open={} qui permet de dire si elle est affichée ou non)
+3. Ajouter un NextLink Add Room qui rajoutera newRoom=true dans l'url
+4. Créer un nouveau components/features/admin/room-form.tsx qui sera un component client
+5. Dans celui ci on fait un formulaire avec react-hook-form qui renverra un CreateRoom
+6. On rajoute un postRoom(room:CreateRoom) qui va faire un axios.post<DisplayRoom> 
+7. Dans room-form, on appel le postRoom au moment du submit
+
+#### Validation de la disponibilité de la Room Number
+1. Côté Spring, modifier la requête du RoomRepository findByNumber pour faire plutôt un un findByNumberOrId avec un @Query au dessus qui ira chercher par number ou id mais avec un seul argument de type String dans la méthode
+2. Modifier dans le RoomBusinessImpl là où on avait appelé findByNumber pour le remplacer par la nouvelle méthode (mettre à jour les tests aussi)
+3. Dans le 

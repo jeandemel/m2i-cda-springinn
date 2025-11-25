@@ -1,5 +1,7 @@
 package fr.m2i.cda.springinn.controller;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -41,6 +43,11 @@ public class RoomController {
     public Page<DisplayRoomDTO> all(@PageableDefault(size = 5) Pageable pageable) {
         return roomBusiness.getRoomPage(pageable).map(item -> mapper.toDisplay(item));
         
+    }
+
+    @GetMapping("/number/{number}")
+    public Boolean isRoomNumberAvailable(@PathVariable String number) {
+        return roomBusiness.roomNumberAvailable(number);
     }
 
     @GetMapping("/{id}")

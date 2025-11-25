@@ -31,7 +31,7 @@ public class RoomBusinessImpl implements RoomBusiness{
     }
 
     private void throwIfExists(Room room) {
-        if(roomRepo.findByNumber(room.getNumber()).isPresent()) {
+        if(!roomNumberAvailable(room.getNumber())) {
             throw new RoomNumberUnavaibleException("Room "+room.getNumber()+" already exists");
         }
     }
@@ -74,6 +74,11 @@ public class RoomBusinessImpl implements RoomBusiness{
         }
         roomRepo.save(room);
         return room;
+    }
+
+    @Override
+    public boolean roomNumberAvailable(String number) {
+        return roomRepo.findByNumber(number).isEmpty();
     }
 
 

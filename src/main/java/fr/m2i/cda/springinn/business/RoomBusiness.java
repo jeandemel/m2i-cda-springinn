@@ -13,4 +13,5 @@ public interface RoomBusiness {
     Room updateRoom(Room room);
     //Avoir les deux update c'est pas génial, mais c'est juste pour avoir les deux possibilités via put ou patch
     Room fullUpdate(Room room);
+    boolean roomNumberAvailable(String number);
 }

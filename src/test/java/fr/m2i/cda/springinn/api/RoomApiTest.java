@@ -87,6 +87,20 @@ public class RoomApiTest {
         .andExpect(jsonPath("$.number").value("A1"));
 
     }
+    @Test
+    void roomAvailableShouldReturnTrueIfAvailableNumber() throws Exception {
+        mvc.perform(get("/api/room/number/A3"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(true));
+
+    }
+    @Test
+    void roomAvailableShouldReturnFalseIfUnavailableNumber() throws Exception {
+        mvc.perform(get("/api/room/number/A1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(false));
+
+    }
 
     @Test
     void getOneShouldThrow404IfNoRoom() throws Exception {
