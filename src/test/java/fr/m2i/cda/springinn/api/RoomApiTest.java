@@ -31,7 +31,7 @@ public class RoomApiTest {
         mvc.perform(get("/api/room"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content").isNotEmpty())
-        .andExpect(jsonPath("$.page.totalElements").value(4))
+        .andExpect(jsonPath("$.page.totalElements").value(8))
         .andExpect(jsonPath("$.content[0].number").value("A1"));
 
     }
@@ -43,7 +43,7 @@ public class RoomApiTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
-                "number":"C1",
+                "number":"E1",
                 "capacity":2,
                 "price":100
             }

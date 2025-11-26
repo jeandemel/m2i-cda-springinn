@@ -10,6 +10,11 @@ INSERT INTO room (id,number,capacity,price) VALUES ('room2', 'A2', 3, 85);
 INSERT INTO room (id,number,capacity,price) VALUES ('room3', 'B1', 4, 95);
 INSERT INTO room (id,number,capacity,price) VALUES ('room4', 'B2', 2, 70);
 
+INSERT INTO room (id,number,capacity,price) VALUES ('room5', 'C1', 2, 65);
+INSERT INTO room (id,number,capacity,price) VALUES ('room6', 'C2', 3, 85);
+INSERT INTO room (id,number,capacity,price) VALUES ('room7', 'D1', 4, 95);
+INSERT INTO room (id,number,capacity,price) VALUES ('room8', 'D2', 2, 70);
+
 INSERT INTO booking (id,customer_id,duration,guest_count,start_date,total) VALUES ('booking1','user2',2 , 2,'2025-01-01',130);
 INSERT INTO booking (id,customer_id,duration,guest_count,start_date,total) VALUES ('booking2','user2',7 , 1,'2025-05-01',490);
 INSERT INTO booking (id,customer_id,duration,guest_count,start_date,total) VALUES ('booking3','user3',1 , 5,'2025-08-01',150);
