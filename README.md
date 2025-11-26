@@ -315,3 +315,10 @@ Alternative :
 2. Transformer cette requête en JPQL et la rajouter dans les méthodes de notre RoomRepository
 3. Modifier l'interface RoomBusiness pour y ajouter le searchAvailable(LocalDate start, Integer duration) qui renverra une List<Room>
 4. Rajouter une route en GET sur /api/room/available/{start}/{duration}
+
+#### Formulaire de recherche
+1. Côté Next, on créer une nouvelle page /app/search/page.tsx
+2. On créer ensuite un components/features/boooking/search-form.tsx qui aura un DatePicker en mode Range Picker (voir la doc ant design) 
+3. À la validation de ce formulaire, on rediriger avec le useRouter vers /search?startDate=...&duration=... en ayant dont récupérer la date de début et la duration vis à vis de la date de fin
+4. Dans notre /app/search/page.tsx, si on a un startDate et un duration dans nos searchParams alors on fait une requête vers notre route de recherche du back
+5. On fait un affichage des Rooms sous forme de card ou autre avec un petit component et tout

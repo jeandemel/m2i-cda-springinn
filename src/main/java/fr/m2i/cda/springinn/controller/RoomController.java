@@ -1,6 +1,7 @@
 package fr.m2i.cda.springinn.controller;
 
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,14 @@ public class RoomController {
     @GetMapping("/{id}")
     public DisplayRoomDTO one(@PathVariable String id) {
         return mapper.toDisplay(roomBusiness.getOneRoom(id));
+    }
+
+    @GetMapping("/available/{startDate}/{duration}")
+    public List<DisplayRoomDTO> getAvailables(@PathVariable LocalDate startDate, @PathVariable Integer duration) {
+        return roomBusiness
+        .getAvailableRooms(startDate, duration)
+        .stream().map(item -> mapper.toDisplay(item))
+        .toList();
     }
 
     @PostMapping

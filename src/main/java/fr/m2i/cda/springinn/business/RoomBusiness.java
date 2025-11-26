@@ -1,5 +1,8 @@
 package fr.m2i.cda.springinn.business;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +17,5 @@ public interface RoomBusiness {
     //Avoir les deux update c'est pas génial, mais c'est juste pour avoir les deux possibilités via put ou patch
     Room fullUpdate(Room room);
     boolean roomNumberAvailable(String number);
+    List<Room> getAvailableRooms(LocalDate startDate, Integer duration);
 }

@@ -7,7 +7,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,6 +39,27 @@ public class RoomApiTest {
         .andExpect(jsonPath("$.page.totalElements").value(8))
         .andExpect(jsonPath("$.content[0].number").value("A1"));
 
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("availableSource")
+    void getAvailableShouldReturnAvailableRooms(String startDate, String duration, int expectedLength) throws Exception {
+        mvc.perform(get("/api/room/available/%s/%s".formatted(startDate,duration)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isNotEmpty())
+        .andExpect(jsonPath("$.length()").value(expectedLength));
+
+    }
+
+    private static Stream<Arguments> availableSource() {
+        return Stream.of(
+            Arguments.of("2025-01-01", "10", 7),
+            Arguments.of("2024-12-25", "15", 7),
+            Arguments.of("2025-01-02", "1", 7),
+            Arguments.of("2025-01-01", "356", 5),
+            Arguments.of("2025-01-01", "170", 6)
+        );
     }
 
 

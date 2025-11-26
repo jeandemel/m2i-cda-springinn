@@ -1,5 +1,8 @@
 package fr.m2i.cda.springinn.business.impl;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -79,6 +82,11 @@ public class RoomBusinessImpl implements RoomBusiness{
     @Override
     public boolean roomNumberAvailable(String number) {
         return roomRepo.findByNumber(number).isEmpty();
+    }
+
+    @Override
+    public List<Room> getAvailableRooms(LocalDate startDate, Integer duration) {
+        return roomRepo.findAvailables(startDate, duration);
     }
 
 
