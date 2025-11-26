@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PreRemove;
 
 @Entity
 public class Room {
@@ -59,5 +60,12 @@ public class Room {
 
     public void setBookings(List<Booking> bookings) {
         this.bookings = bookings;
+    }
+
+    @PreRemove
+    private void beforeRemove() {
+        for(Booking booking : bookings) {
+            booking.getRooms().remove(this);
+        }
     }
 }
