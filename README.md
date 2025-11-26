@@ -276,3 +276,42 @@ public class BusinessExceptionController {
 1. Côté Spring, modifier la requête du RoomRepository findByNumber pour faire plutôt un un findByNumberOrId avec un @Query au dessus qui ira chercher par number ou id mais avec un seul argument de type String dans la méthode
 2. Modifier dans le RoomBusinessImpl là où on avait appelé findByNumber pour le remplacer par la nouvelle méthode (mettre à jour les tests aussi)
 3. Dans le 
+
+#### Pagination des rooms
+1. Dans le RoomsTable, rajouter la propriété pagination sur la Table en lui donnant les informations de la page là où ça match (donc à priori Table.current c'est Page.number+1, Table.total c'est Page.totalElements, Table.pageSize c'est Page.size)
+2. Faire de RoomsTable un component client et sur le onChange on va récupérer les informations de pagination (current et pageSize je crois, mais à vérifier) et on va faire en sorte de les envoyer dans l'url avec un useRouter et avec un push pour envoyer vers /admin/room?page=...&size=...
+3. Dans notre fetchRoomPage, on rajoute un argument page et size en string et on rajoute ces informations dans la requête (soit en concaténant dans l'url, soit avec la propriété `query` de axios)
+4. Dans le admin/room/page.tsx, on récupère les searchParams page et size avec des valeurs par défaut et on les donne à manger à notre fetchRoomPage
+
+#### Administrer des rooms
+1. Dans le RoomsTable, créer une const rowSelection: TableProps<DisplayRoom>['rowSelection'] = {} qu'on vient assigner au rowSelection de la Table dans le template
+2. Dans cet objet, on vient lui indiquer 'checkbox' comme type et on vient définir la fonction onChange(rowKeys:React.Key[], selectedRows:DisplayRoom[])
+3. On créer un useState currentSelection de type DisplayRoom[] avec un tableau vide par défaut dedans et dans le onChange de notre rowSelection, on vient assigner les selectedRows à notre setCurrentSelection (donc en gros on fait en sorte de récupérer les rooms sélectionnées pour les avoir dans un state)
+4. Dans RoomTable, on rajoute des buttons Edit et Delete, et on disable le Delete si aucun élément sélectionné et le Edit si on a pas exactement 1 élement sélectionné
+5. On vient rajouter la fonction deleteRoom(id:string) dans notre room-api.ts et dans le RoomsTable, on dit que au click sur le button delete on boucle sur les rooms sélectionnées pour les donner au deleteRoom
+
+
+#### Édition de Room
+1. Modifier le RoomForm pour y ajouter une Props avec un DisplayRoom optionnel
+2. Dans le template, si on a la props alors on la donne comme initialValues au <Form>
+3. On vient rajouter un patchRoom(room:UpdateRoom) dans lequel on fait un patch avec l'id dans l'url et la room dans le body
+4. Dans notre RoomForm, on vient faire une condition dans le handleSubmit pour soit lancer postRoom soit lancer patchRoom selon si on a notre props ou non
+5. Pour tester tout ça, on peut donner le premier élément du tableau page.content en props à notre <RoomForm> dans la page
+6. Dans notre RoomsTable, on vient modifier le button edit pour faire qu'il nous envoie vers /admin/room?newRoom=id-de-la-room sélectionnée (donc le premier élément de currentSelection)
+7. Côté /admin/room/page.tsx, on vient récupérer newRoom dans les searchParams et on va lui dire que si c'est égal à 'new', alors on fait rien de particulier, et sinon on va chercher dans la roomPage la Room correspondante à l'id qui se trouve probablement dans newRoom et on donne ça à manger à RoomForm.
+8. On modifie le lien du button Add Room pour faire qu'il envoie newRoom:'new'
+
+Alternative :
+1. Dans RoomForm, on récupère les searchParams avec useSearchParams, on fait un useEffect qui va vérifier si on a un newRoom dans les params
+2. Si non ou qu'il contient 'new' alors c'est un formulaire d'ajout, on fait rien de particulier
+3. Si oui et qu'il ne contient pas new, alors on fait une requête fetchOneRoom(newRoom) pour aller récupérer la room à éditer et on assigne les valeurs récupéré à un useState et au formulaire
+4. On garde la condition pour déclencher post ou patch selon si on a un truc à éditer
+
+
+
+### Les réservations
+#### Recherche de Room disponible
+1. Commencer par identifier une requête SQL permettant de récupérer toutes les rooms qui n'ont pas de booking sur une période données. Exemple: Je veux les chambres dispos sur 3 jours depuis le 2025-01-01 et ça devrait sortir toutes les rooms sauf la room1 qui a une réservation sur cette période
+2. Transformer cette requête en JPQL et la rajouter dans les méthodes de notre RoomRepository
+3. Modifier l'interface RoomBusiness pour y ajouter le searchAvailable(LocalDate start, Integer duration) qui renverra une List<Room>
+4. Rajouter une route en GET sur /api/room/available/{start}/{duration}
