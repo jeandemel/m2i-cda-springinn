@@ -1,15 +1,21 @@
 package fr.m2i.cda.springinn.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.m2i.cda.springinn.business.BookingBusiness;
+import fr.m2i.cda.springinn.controller.dto.AdminDisplayBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.CreateBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.DisplayBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.mapper.BookingMapper;
@@ -26,6 +32,20 @@ public class BookingController {
         this.bookingBusiness = bookingBusiness;
         this.bookingMapper = bookingMapper;
     }
+
+
+    @GetMapping
+    public Page<AdminDisplayBookingDTO> getAdminBookings(@PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false,defaultValue = "false") Boolean awaitingConfirm) {
+        Page<Booking> bookings;
+        if(awaitingConfirm) {
+            bookings = bookingBusiness.getAwaitingConfirmation();
+        } else {
+            bookings = bookingBusiness.getAll(pageable);
+        }
+        return bookings.map(item-> bookingMapper.toAdminDisplay(item));
+
+    }
+    
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

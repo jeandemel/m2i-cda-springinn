@@ -2,6 +2,8 @@ package fr.m2i.cda.springinn.business.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import fr.m2i.cda.springinn.business.BookingBusiness;
@@ -54,6 +56,16 @@ public class BookingBusinessImpl implements BookingBusiness{
         Booking booking = bookingRepo.findById(id).orElseThrow();
         booking.setConfirmed(true);
         bookingRepo.save(booking);
+    }
+
+    @Override
+    public Page<Booking> getAwaitingConfirmation() {
+        return bookingRepo.findNotConfirmed(Pageable.ofSize(100));
+    }
+
+    @Override
+    public Page<Booking> getAll(Pageable pageable) {
+        return bookingRepo.findAll(pageable);
     }
 
 }

@@ -1,5 +1,8 @@
 package fr.m2i.cda.springinn.business;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import fr.m2i.cda.springinn.entity.Booking;
 
 public interface BookingBusiness {
@@ -15,4 +18,7 @@ public interface BookingBusiness {
      * @param id L'id du booking à confirmer
      */
     void confirmBooking(String id);
+
+    Page<Booking> getAwaitingConfirmation();
+    Page<Booking> getAll(Pageable pageable);
 }

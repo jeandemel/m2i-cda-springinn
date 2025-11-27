@@ -345,3 +345,13 @@ Alternative :
 5. Dans le contrôleur d'exception on vient rajouter nos deux exceptions pour qu'elles renvoient des 400
 6. On fait le booking controller avec les 2 routes, une en POST et l'autre en PATCH et on crée le CreateBookingDTO
 7. Faire les tests fonctionnels et ou unitaires de ces méthodes
+
+
+#### Admin Réservations
+1. Rajouter 2 méthodes dans le BookingBusiness : Page<Booking> getAwaitingConfirmation() et Page<Booking> getAll(Pageable pageable)
+2. Dans le getAwaiting on récupère une page avec une taille de 100 de toutes les réservations qui sont en confirmed false
+3. Dans le getAll, on récupère une page classique
+4. Dans le BookingController, on rajoute une route en GetMapping et on récupère les trucs de pagination ainsi qu'un paramètre de requête optionnel "awaitingConfirm". Si on a le awaiting, on lance la getAwaitingConfirmation du business sinon on lance le getAll
+5. Côté front, on vient rajouter 2 menus dans l'admin, un pour List Booking et un pour Booking Awaiting Confirmation
+6. On crée une page src/app/admin/booking-awaiting dans laquelle on va faire un appel à la route pour récupérer les booking en attente de confirmation
+7. On crée un component BookingsTable qui nous servira pour les deux pages et qui va afficher lse bookings sous forme de Table. Si le booking est en attente de confirmation, on affiche un button pour le valider
