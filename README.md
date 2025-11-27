@@ -321,4 +321,27 @@ Alternative :
 2. On créer ensuite un components/features/boooking/search-form.tsx qui aura un DatePicker en mode Range Picker (voir la doc ant design) 
 3. À la validation de ce formulaire, on rediriger avec le useRouter vers /search?startDate=...&duration=... en ayant dont récupérer la date de début et la duration vis à vis de la date de fin
 4. Dans notre /app/search/page.tsx, si on a un startDate et un duration dans nos searchParams alors on fait une requête vers notre route de recherche du back
-5. On fait un affichage des Rooms sous forme de card ou autre avec un petit component et tout
+
+#### Résultat de recherche sélectionnable
+1. Créer un component/features/booking/selectable-rooms.tsx qui va attendre en props un tableau de DisplayRoom
+2. Dans ce component, faire une boucle sur les rooms et les afficher sous forme de Card
+3. Rajouter un useState selectedRooms et faire qu'au click sur une card ça l'ajoute ou la retire du selectedRooms
+4. Modifier l'affichage de la card pour faire que si la room est selected, on la distingue visuellement
+5. Dans le SearchForm, rajouter un champ guestCount avec une valeur minimale et par défaut de 1, on l'envoie dans l'url également au moment de la validation du Form
+6. Dans les types, rajouter une interface CreateBooking avec startDate,duration,rooms,guestCount
+7. Dans le SelectableRooms, rajouter un button "Proceed to booking" qui va stocker en JSON dans le sessionStorage un objet CreateBooking avec toutes les infos qu'on a sous la main (pour la startDate, la duration et le guestCount, on les récupères des searchParams avec le useSearchParams)
+
+#### Validation de la réservation
+1. Créer une nouvelle page  /confirm-booking/page.tsx avec un 'use client'
+2. Dans cette page, on récupère le contenu du sessionStorage et on le parse (s'il existe pas, alors on affiche un message disant qu'on a pas de réservation en cours)
+3. On fait l'affichage de la réservation en attente avec la liste des rooms, le guestCount, date de début et de fin, nombre de jours et prix total calculé à partir du prix des chambres et tout
+
+
+#### Réservation côté backend
+1. Créer une interface BookingBusiness avec une méthode Booking createBooking(Booking booking) et un void validateBooking(String id)
+2. Modifier l'entité Booking pour y ajouter un confirmed en Boolean (mettre à jour le data.sql)
+3. Le validateBooking va juste récupérer le booking et passer son confirmed à true
+4. Le createBooking va faire la vérification du guestCount vs capacity des rooms et si c'est pas bon, throw une InvalidBookingCapacityException, puis boucler sur les rooms pour bien confirmer que toutes sont disponibles pour la startDate et duration données (soit avec la méthode repository qu'on a déjà, soit avec une nouvelle), si non UnavailableRoomException de throw. On calcul le total à partir du prix des rooms et de la duration et on fait persister le tout avec un confirmed à false
+5. Dans le contrôleur d'exception on vient rajouter nos deux exceptions pour qu'elles renvoient des 400
+6. On fait le booking controller avec les 2 routes, une en POST et l'autre en PATCH et on crée le CreateBookingDTO
+7. Faire les tests fonctionnels et ou unitaires de ces méthodes

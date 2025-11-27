@@ -8,11 +8,7 @@
 	],
 
 	"features": {
-		"ghcr.io/davzucky/devcontainers-features-wolfi/bash:1": {},
-		"ghcr.io/devcontainers/features/git:1": {
-			"ppa": true,
-			"version": "system"
-		}
+
 		
 	},
 

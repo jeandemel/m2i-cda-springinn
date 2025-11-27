@@ -20,6 +20,7 @@ public class Booking {
     private Integer duration;
     private Integer guestCount;
     private Double total;
+    private Boolean confirmed;
 
     @ManyToMany
     private List<Room> rooms = new ArrayList<>();
@@ -81,5 +82,14 @@ public class Booking {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+    
+
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 }
