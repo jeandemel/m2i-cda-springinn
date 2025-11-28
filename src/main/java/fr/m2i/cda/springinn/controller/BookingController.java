@@ -35,7 +35,8 @@ public class BookingController {
 
 
     @GetMapping
-    public Page<AdminDisplayBookingDTO> getAdminBookings(@PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false,defaultValue = "false") Boolean awaitingConfirm) {
+    public Page<AdminDisplayBookingDTO> getAdminBookings(@PageableDefault(size = 10) Pageable pageable, 
+    @RequestParam(required = false,defaultValue = "false") Boolean awaitingConfirm) {
         Page<Booking> bookings;
         if(awaitingConfirm) {
             bookings = bookingBusiness.getAwaitingConfirmation();

@@ -1,6 +1,6 @@
 package fr.m2i.cda.springinn.api;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,77 +23,96 @@ import jakarta.transaction.Transactional;
 @AutoConfigureMockMvc
 @Transactional
 public class BookingApiTest {
-    
+
     @Autowired
     MockMvc mvc;
     @Autowired
     BookingRepository bookingRepo;
 
+    @Test
+    void postShouldPersistNewBooking() throws Exception {
+        mvc.perform(post("/api/booking")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            {
+                                "startDate":"2026-01-01",
+                                "duration":2,
+                                "guestCount":2,
+                                "rooms":[
+                                    {"id":"room1"},
+                                    {"id":"room2"}
+                                ]
+                            }
+                        """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.total").value(300))
+                .andExpect(jsonPath("$.confirmed").value(false));
+    }
 
     @Test
-   void postShouldPersistNewBooking() throws Exception {
+    void postShouldHaveErrorOnTooManyGuest() throws Exception {
         mvc.perform(post("/api/booking")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-            {
-                "startDate":"2026-01-01",
-                "duration":2,
-                "guestCount":2,
-                "rooms":[
-                    {"id":"room1"},
-                    {"id":"room2"}
-                ]
-            }
-        """))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").isNotEmpty())
-        .andExpect(jsonPath("$.total").value(300))
-        .andExpect(jsonPath("$.confirmed").value(false));
-   }
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            {
+                                "startDate":"2026-01-01",
+                                "duration":2,
+                                "guestCount":20,
+                                "rooms":[
+                                    {"id":"room1"},
+                                    {"id":"room2"}
+                                ]
+                            }
+                        """))
+                .andExpect(status().isBadRequest());
+    }
 
-   
     @Test
-   void postShouldHaveErrorOnTooManyGuest() throws Exception {
+    void postShouldHaveErrorOnUnavailableRoom() throws Exception {
         mvc.perform(post("/api/booking")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-            {
-                "startDate":"2026-01-01",
-                "duration":2,
-                "guestCount":20,
-                "rooms":[
-                    {"id":"room1"},
-                    {"id":"room2"}
-                ]
-            }
-        """))
-        .andExpect(status().isBadRequest());
-   }
-   
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                            {
+                                "startDate":"2025-01-01",
+                                "duration":2,
+                                "guestCount":2,
+                                "rooms":[
+                                    {"id":"room1"},
+                                    {"id":"room2"}
+                                ]
+                            }
+                        """))
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
-   void postShouldHaveErrorOnUnavailableRoom() throws Exception {
-        mvc.perform(post("/api/booking")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("""
-            {
-                "startDate":"2025-01-01",
-                "duration":2,
-                "guestCount":2,
-                "rooms":[
-                    {"id":"room1"},
-                    {"id":"room2"}
-                ]
-            }
-        """))
-        .andExpect(status().isBadRequest());
-   }
-
-
-     @Test
-   void patchConfirmShouldPassConfirmedToTrue() throws Exception {
+    void patchConfirmShouldPassConfirmedToTrue() throws Exception {
         mvc.perform(patch("/api/booking/confirm/booking3"))
-        .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent());
 
         assertTrue(bookingRepo.findById("booking3").get().getConfirmed());
-   }
+    }
+
+    @Test
+    void getShouldReturnAllBookings() throws Exception {
+        mvc.perform(get("/api/booking"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.page.totalElements").value(3))
+            .andExpect(jsonPath("$.content[0].id").value("booking1"))
+            ;
+
+    }
+    
+    @Test
+    void getShouldReturnAllBookingsAwaitingConfirmation() throws Exception {
+        mvc.perform(get("/api/booking?awaitingConfirm=true"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.page.totalElements").value(1))
+            .andExpect(jsonPath("$.content[0].id").value("booking3"))
+            .andExpect(jsonPath("$.content[0].confirmed").value(false))
+
+            ;
+
+    }
 }
