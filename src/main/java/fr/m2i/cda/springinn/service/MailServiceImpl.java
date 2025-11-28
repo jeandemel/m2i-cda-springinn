@@ -20,16 +20,20 @@ public class MailServiceImpl implements MailService{
 
     @Override
     public void sendExample() {
+        sendMail("test@test.com","Test Email", """
+                The content of the test mail with <a href="#">HTML</a>
+                """);
+    }
+
+    private void sendMail(String receiver, String subject, String content) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
-            helper.setTo("example@test.com");
+            helper.setTo(receiver);
             helper.setFrom("springinn@m2i.fr");
-            helper.setSubject("Example mail");
-            helper.setText("""
-                This is a test email with a bit of <a href="#">HTML</a>
-            """,true);
+            helper.setSubject(subject);
+            helper.setText(content,true);
 
             mailSender.send(mimeMessage);
         } catch (MailException | MessagingException e) {
@@ -39,20 +43,27 @@ public class MailServiceImpl implements MailService{
 
     @Override
     public void sendBookingCreation(Booking booking) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendBookingCreation'");
+       
+         sendMail(booking.getCustomer().getEmail(),"SpringInn - You have placed a Booking", """
+You're booking for %s persons on the %s for %s days has been taken in account and will be confirmed by our team.
+                """.formatted(booking.getGuestCount(), booking.getStartDate(), booking.getDuration()));
     }
 
     @Override
     public void sendBookingConfirmation(Booking booking) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendBookingConfirmation'");
+       
+         sendMail(booking.getCustomer().getEmail(),"SpringInn - Booking confirmed", """
+You're booking for %s persons on the %s for %s days has been confirmed by our team.
+                """.formatted(booking.getGuestCount(), booking.getStartDate(), booking.getDuration()));
     }
 
     @Override
     public void sendBookingRefused(Booking booking) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sendBookingRefused'");
+       
+       
+         sendMail(booking.getCustomer().getEmail(),"SpringInn - Booking refused", """
+We are sorry but you're booking for %s persons on the %s for %s days can't be honoured.
+                """.formatted(booking.getGuestCount(), booking.getStartDate(), booking.getDuration()));
     }
 
 

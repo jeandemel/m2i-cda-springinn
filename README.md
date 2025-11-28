@@ -361,7 +361,7 @@ Alternative :
 
 
 #### Envoi de mails de confirmation
-1. Si ce n'est pas déjà fait, se créer un compte (gratuit) sur mailtrap.io et dans la partie sandboxes récupérer les crédentials SMTP pour les mettre dans le application.properties
+1. En utilisant le conteneur de serveur SMTP configuré dans le .devcontainer/docker-compose-dev.yaml, on configure son java mail sender si ce n'est pas déjà fait
 2. Créer une méthode privée sendMail(String receiverEmail, String subject, String content) qui va faire tout ce qu'on fait dans le sendExample pour pouvoir le réutiliser dans les autres méthodes facilement
 3. Implémenter les 3 méthodes pour envoyer des mail de confirmation selon les événement en récupérant l'email dans le customer du booking et quelques informations dans le booking aussi pour le mettre dans le mail
 4. Dans le BookingBusiness, rajouter le MailService dans les injections et faire en sorte d'envoyer un mail quand on crée le booking, quand on le confirme ou quand on le delete

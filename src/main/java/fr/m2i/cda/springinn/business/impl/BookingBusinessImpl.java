@@ -14,17 +14,20 @@ import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.Room;
 import fr.m2i.cda.springinn.repository.BookingRepository;
 import fr.m2i.cda.springinn.repository.RoomRepository;
+import fr.m2i.cda.springinn.service.MailService;
 
 @Service
 public class BookingBusinessImpl implements BookingBusiness{
 
     private RoomRepository roomRepo;
     private BookingRepository bookingRepo;
+    private MailService mailService;
     
-    
-    public BookingBusinessImpl(RoomRepository roomRepo, BookingRepository bookingRepo) {
+
+    public BookingBusinessImpl(RoomRepository roomRepo, BookingRepository bookingRepo, MailService mailService) {
         this.roomRepo = roomRepo;
         this.bookingRepo = bookingRepo;
+        this.mailService = mailService;
     }
 
     @Override
@@ -50,8 +53,10 @@ public class BookingBusinessImpl implements BookingBusiness{
         //TODO : modifier par le user actuellement connecté
         Customer fakeCustomer =  new Customer();
         fakeCustomer.setId("user2");
+        fakeCustomer.setEmail("customer@test.com");
         booking.setCustomer(fakeCustomer);
         bookingRepo.save(booking);
+        mailService.sendBookingCreation(booking);
         return booking;
     }
 
@@ -61,6 +66,8 @@ public class BookingBusinessImpl implements BookingBusiness{
         Booking booking = bookingRepo.findById(id).orElseThrow();
         booking.setConfirmed(true);
         bookingRepo.save(booking);
+        mailService.sendBookingConfirmation(booking);
+
     }
 
     @Override
@@ -77,6 +84,11 @@ public class BookingBusinessImpl implements BookingBusiness{
     public void removeBooking(String id) {
        Booking toDelete = bookingRepo.findById(id).orElseThrow();
        bookingRepo.delete(toDelete);
+       if(!toDelete.getConfirmed()) {
+           
+           mailService.sendBookingRefused(toDelete);
+        }
+
     }
 
 }
