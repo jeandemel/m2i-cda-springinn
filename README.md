@@ -353,5 +353,8 @@ Alternative :
 3. Dans le getAll, on récupère une page classique
 4. Dans le BookingController, on rajoute une route en GetMapping et on récupère les trucs de pagination ainsi qu'un paramètre de requête optionnel "awaitingConfirm". Si on a le awaiting, on lance la getAwaitingConfirmation du business sinon on lance le getAll
 5. Côté front, on vient rajouter 2 menus dans l'admin, un pour List Booking et un pour Booking Awaiting Confirmation
-6. On crée une page src/app/admin/booking-awaiting dans laquelle on va faire un appel à la route pour récupérer les booking en attente de confirmation
-7. On crée un component BookingsTable qui nous servira pour les deux pages et qui va afficher lse bookings sous forme de Table. Si le booking est en attente de confirmation, on affiche un button pour le valider
+6. On crée une page src/app/admin/booking-awaiting dans laquelle on va faire un appel à la route pour récupérer les booking en attente de confirmation ainsi qu'une deuxième page src/app/admin/list-bookings qui fera un appel sur la route get all avec infos de pagination
+7. On crée un component BookingsTable qui nous servira pour les deux pages et qui va afficher les bookings sous forme de Table.
+8. Dans la Table, si le Booking a confirmed à false, alors on affiche 2 Button, un pour accepter, un pour refuser
+9. On rajoute des events au click sur ces button, si on click sur accepter ça vient taper sur notre route patch pour confirmer la réservation. Si on click sur refuser ça vient faire un delete du booking
+10. On rajoute côté back une méthode dans le BookingBusiness et le contrôleur pour la suppression

@@ -1,6 +1,7 @@
 package fr.m2i.cda.springinn.api;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -111,8 +112,15 @@ public class BookingApiTest {
             .andExpect(jsonPath("$.page.totalElements").value(1))
             .andExpect(jsonPath("$.content[0].id").value("booking3"))
             .andExpect(jsonPath("$.content[0].confirmed").value(false))
-
             ;
 
+    }
+
+     @Test
+    void deleteShouldRemoveExistingBooking() throws Exception {
+        mvc.perform(delete("/api/booking/booking3"))
+                .andExpect(status().isNoContent());
+
+        assertTrue(bookingRepo.findById("booking3").isEmpty());
     }
 }

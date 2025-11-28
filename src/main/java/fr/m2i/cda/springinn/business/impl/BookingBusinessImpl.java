@@ -10,6 +10,7 @@ import fr.m2i.cda.springinn.business.BookingBusiness;
 import fr.m2i.cda.springinn.business.exception.InvalidBookingCapacityException;
 import fr.m2i.cda.springinn.business.exception.RoomUnavailableException;
 import fr.m2i.cda.springinn.entity.Booking;
+import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.Room;
 import fr.m2i.cda.springinn.repository.BookingRepository;
 import fr.m2i.cda.springinn.repository.RoomRepository;
@@ -46,6 +47,10 @@ public class BookingBusinessImpl implements BookingBusiness{
         }
         booking.setTotal(totalPrice);
         booking.setConfirmed(false);
+        //TODO : modifier par le user actuellement connecté
+        Customer fakeCustomer =  new Customer();
+        fakeCustomer.setId("user2");
+        booking.setCustomer(fakeCustomer);
         bookingRepo.save(booking);
         return booking;
     }
@@ -66,6 +71,12 @@ public class BookingBusinessImpl implements BookingBusiness{
     @Override
     public Page<Booking> getAll(Pageable pageable) {
         return bookingRepo.findAll(pageable);
+    }
+
+    @Override
+    public void removeBooking(String id) {
+       Booking toDelete = bookingRepo.findById(id).orElseThrow();
+       bookingRepo.delete(toDelete);
     }
 
 }

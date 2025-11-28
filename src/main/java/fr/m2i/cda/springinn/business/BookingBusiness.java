@@ -19,6 +19,18 @@ public interface BookingBusiness {
      */
     void confirmBooking(String id);
 
+    /**
+     * Méthode pour lister les réservations en attente de confirmation
+     */
     Page<Booking> getAwaitingConfirmation();
+    /**
+     * Méthode pour lister toutes les réservations paginées
+     */
     Page<Booking> getAll(Pageable pageable);
+
+    /**
+     * Méthode pour supprimer une réservatio
+     * @param id L'id de la réservatio à supprimer
+     */
+    void removeBooking(String id);
 }
