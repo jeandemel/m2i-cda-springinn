@@ -358,3 +358,10 @@ Alternative :
 8. Dans la Table, si le Booking a confirmed à false, alors on affiche 2 Button, un pour accepter, un pour refuser
 9. On rajoute des events au click sur ces button, si on click sur accepter ça vient taper sur notre route patch pour confirmer la réservation. Si on click sur refuser ça vient faire un delete du booking
 10. On rajoute côté back une méthode dans le BookingBusiness et le contrôleur pour la suppression
+
+
+#### Envoi de mails de confirmation
+1. Si ce n'est pas déjà fait, se créer un compte (gratuit) sur mailtrap.io et dans la partie sandboxes récupérer les crédentials SMTP pour les mettre dans le application.properties
+2. Créer une méthode privée sendMail(String receiverEmail, String subject, String content) qui va faire tout ce qu'on fait dans le sendExample pour pouvoir le réutiliser dans les autres méthodes facilement
+3. Implémenter les 3 méthodes pour envoyer des mail de confirmation selon les événement en récupérant l'email dans le customer du booking et quelques informations dans le booking aussi pour le mettre dans le mail
+4. Dans le BookingBusiness, rajouter le MailService dans les injections et faire en sorte d'envoyer un mail quand on crée le booking, quand on le confirme ou quand on le delete
