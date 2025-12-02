@@ -29,7 +29,7 @@ public interface BookingBusiness {
     Page<Booking> getAll(Pageable pageable);
 
     /**
-     * Méthode pour supprimer une réservatio
+     * Méthode pour supprimer une réservation
      * @param id L'id de la réservatio à supprimer
      */
     void removeBooking(String id);

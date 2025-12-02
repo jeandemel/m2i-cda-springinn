@@ -5,8 +5,10 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import fr.m2i.cda.springinn.entity.Booking;
+import fr.m2i.cda.springinn.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -64,6 +66,14 @@ You're booking for %s persons on the %s for %s days has been confirmed by our te
          sendMail(booking.getCustomer().getEmail(),"SpringInn - Booking refused", """
 We are sorry but you're booking for %s persons on the %s for %s days can't be honoured.
                 """.formatted(booking.getGuestCount(), booking.getStartDate(), booking.getDuration()));
+    }
+
+    @Override
+    public void sendEmailValidation(User user) {
+        String link = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/api/account/validate/"+user.getId();
+         sendMail(user.getEmail(),"SpringInn - Email Validation", """
+Please follow <a href="%s">this link</a> to validate your email.
+                """.formatted(link));
     }
 
 

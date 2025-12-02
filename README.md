@@ -231,6 +231,33 @@ public class BusinessExceptionController {
 ```
 
 
+### Envoi de mail
+Pour envoyer des mails depuis notre application, il faut avoir un serveur de mail configuré. Plein d'options possibles pour en obtenir un, soit en passant par ceux fournis par les fournisseurs de mail gmail/outlook/etc. soit souscire à un serveur de mail spécifique, on peut parfois même en avoir un avec son FAI, ou bien via son hebergeur. On peut également self-host le serveur SMTP, il faudra alors installer un serveur de mail sur un serveur/dans un conteneur juste avoir un nom de domaine pour le lier à notre serveur.
+
+Dans l'absolu, l'application n'a même pas trop à savoir d'où vient ce serveur SMTP, elle doit juste avoir les information de connexion à celui ci (le port, le host et souvent le username/password) à spécifier dans le application.properties :
+
+```
+spring.mail.host=???
+spring.mail.username=???
+spring.mail.password=???
+spring.mail.port=???
+```
+
+Dans le contexte du développement, on part sur un conteneur docker fournissant un serveur SMTP de développement qu'on a configuré dans le [docker-compose-dev.yml](.devcontainer/docker-compose-dev.yml)
+
+```yml
+#on définit le service/conteneur 
+  mailserver:
+    image: maildev/maildev #on utilise l'image maildev, ce n'est pas la seule qui fournit ce genre de service
+    environment:
+      - MAILDEV_SMTP_PORT=1025 #on indique le port SMTP que le serveur de mail écoutera
+    ports:
+     - 1080:1080 #on expose le port 1080 sur notre machine pour avoir accès à l'UI du serveur de mail
+ ```
+
+ Côté Java
+
+
 
 ## Instructions
 
@@ -365,3 +392,19 @@ Alternative :
 2. Créer une méthode privée sendMail(String receiverEmail, String subject, String content) qui va faire tout ce qu'on fait dans le sendExample pour pouvoir le réutiliser dans les autres méthodes facilement
 3. Implémenter les 3 méthodes pour envoyer des mail de confirmation selon les événement en récupérant l'email dans le customer du booking et quelques informations dans le booking aussi pour le mettre dans le mail
 4. Dans le BookingBusiness, rajouter le MailService dans les injections et faire en sorte d'envoyer un mail quand on crée le booking, quand on le confirme ou quand on le delete
+
+#### Inscription Customer
+1. Modifier l'entité User pour y ajouter une propriété active en Boolean et implémenter l'interface UserDetails pour laquelle on va venir mettre les méthode obligatoire ainsi que le isEnabled qui se basera sur la propriété active (en gros par défaut ça sera false et on le passera à true une fois l'email validé)
+2. Créer le UserRepository avec le findByEmail ainsi que le security.UserService qui va implémenter le UserDetailsService et son loadByUserByUsername dans lequel on lance le findByEmail
+3. Dans le SecurityConfig, on vient rajouter un @Bean pour récupérer le PasswordEncoder, on reste sur du BCrypt
+4. On crée ensuite un CustomerAccountBusiness avec une méthode Customer register(Customer cutomser) et une méthode void activateAccount(String id)
+5. Dans la méthode register, on vient faire comme d'hab : on hash le mot de passe, on assigne un rôle par défaut (ROLE_CUSTOMER ici), on met le active à false et petite nouveauté, on va envoyer un mail de validation
+6. On vient donc modifier le MailService pour y ajouter une méthode sendEmailValidation(User user)
+7. On fait en sorte d'envoyer un mail qui va envoyer un lien pour l'instant sur http://localhost:8080/api/account/validate/id-du-user
+8. Dans la méthode activateAccount, on récupère le customer par son id et on passe son active à true
+9. On crée un AccountController qui va avoir une méthode en POST qui attendra un CustomerRegisterDTO avec email, password, firstname,name, address et phoneNumber et qui va déclencher le register du business
+10. On crée également une méthode GET (pour l'instant) sur account/valide/{id} qui va lancer le activateAccount
+
+Bonus si vous voulez faire une validation de mail plus secure : 
+Rajouter une variable mail.validation.secret dans le application.properties avec une chaine de caractère random dedans. Dans le MailService.sendEmailValidation, on prend l'id du user, on le concatène à la variable mail.validation.secret qu'on récupère des properties et on passe le tout dans un PasswordEncoder.encode.
+On modifie le activateAccount pour y ajouter un String hash en plus du String id et dedans on vient utiliser le PasswordEncoder pour vérifier si l'id concaténé avec le mail.validation.secret correspond au hash récupéré, si oui on active (on modifie aussi la route pour avoir /account/validate/id-user/hash)

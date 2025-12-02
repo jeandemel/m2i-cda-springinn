@@ -1,5 +1,12 @@
 package fr.m2i.cda.springinn.entity;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +19,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="usertable")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class User {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,6 +28,7 @@ public class User {
     private String email;
     private String password;
     private String role;
+    private Boolean active;
     public String getId() {
         return id;
     }
@@ -44,5 +52,24 @@ public class User {
     }
     public void setRole(String role) {
         this.role = role;
+    }
+    public Boolean getActive() {
+        return active;
+    }
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role));
+    }
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
     }
 }

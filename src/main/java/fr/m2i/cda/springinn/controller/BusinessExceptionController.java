@@ -11,6 +11,7 @@ import fr.m2i.cda.springinn.business.exception.BusinessException;
 import fr.m2i.cda.springinn.business.exception.InvalidBookingCapacityException;
 import fr.m2i.cda.springinn.business.exception.RoomNumberUnavaibleException;
 import fr.m2i.cda.springinn.business.exception.RoomUnavailableException;
+import fr.m2i.cda.springinn.business.exception.UserAlreadyExistException;
 
 
 @RestControllerAdvice
@@ -19,7 +20,8 @@ public class BusinessExceptionController {
     @ExceptionHandler({
         RoomNumberUnavaibleException.class, 
         RoomUnavailableException.class, 
-        InvalidBookingCapacityException.class
+        InvalidBookingCapacityException.class,
+        UserAlreadyExistException.class
     })
     public ProblemDetail roomNumberUnavailable(BusinessException exception) {
         return ProblemDetail
