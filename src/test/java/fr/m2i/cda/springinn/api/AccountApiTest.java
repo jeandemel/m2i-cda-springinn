@@ -74,7 +74,7 @@ public class AccountApiTest {
 
     @Test
     void shouldActivateUser() throws Exception {
-        mvc.perform(get("/api/account/validate/user3/$2a$10$z2DyeZVULTpDcM47AGVapuGfdmuyx24KS.09Hgf9bQ8Io67a7fY8e"))
+        mvc.perform(post("/api/account/validate/user3/JDJhJDEwJFNXeGtjdWFGdjN6UGM5RjdJVjUvcC5rNmlUOS9oV2oxRy5ZbGQxVjZ5V1VSLkJEeVZITnF1"))
         .andExpect(status().isNoContent());
 
         

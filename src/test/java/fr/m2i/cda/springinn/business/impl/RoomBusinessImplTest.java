@@ -61,21 +61,33 @@ public class RoomBusinessImplTest {
 
     @Test
     void updateRoomShouldCallSaveOnAvailableNumber() {
+        Room previousValue = new Room();
+        previousValue.setNumber("autre-number");
         Room toUpdate = new Room();
+        toUpdate.setId("test-id");
         toUpdate.setNumber("test");
+        
+        //On renvoie une Room qui représente celle stockée en bdd
+        when(repo.findById("test-id")).thenReturn(Optional.of(previousValue));
         // On dit au mock de renvoyer un optional vide pour ne pas passer dans le if qui
         // throw
-        when(repo.findByNumber("test")).thenReturn(Optional.empty());
+        when(repo.findByNumber("test"))
+        .thenReturn(Optional.empty());
         // On appel la méthode
         instance.updateRoom(toUpdate);
         // On s'attend à ce que le save du repo ait été appelé
-        verify(repo, times(1)).save(toUpdate);
+        verify(repo, times(1)).save(previousValue);
     }
 
     @Test
     void updateRoomShouldThrowOnNumberUnavailable() {
+        Room previousValue = new Room();
+        previousValue.setNumber("autre-number");
         Room toUpdate = new Room();
+        toUpdate.setId("test-id");
         toUpdate.setNumber("test");
+
+        when(repo.findById("test-id")).thenReturn(Optional.of(previousValue));
         // On dit au mock de renvoyer un optional plein pour provoquer le throw
         when(repo.findByNumber("test")).thenReturn(Optional.of(new Room()));
 
