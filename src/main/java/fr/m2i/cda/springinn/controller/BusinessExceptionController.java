@@ -7,6 +7,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import fr.m2i.cda.springinn.business.exception.AccountValidationException;
 import fr.m2i.cda.springinn.business.exception.BusinessException;
 import fr.m2i.cda.springinn.business.exception.InvalidBookingCapacityException;
 import fr.m2i.cda.springinn.business.exception.RoomNumberUnavaibleException;
@@ -32,5 +33,12 @@ public class BusinessExceptionController {
     public ProblemDetail ressourcenotFound() {
         return ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, "Ressource could not be found");
+    }
+
+
+    @ExceptionHandler(AccountValidationException.class)
+    public ProblemDetail accessForbidden(BusinessException exception) {
+        return ProblemDetail
+        .forStatusAndDetail(HttpStatus.FORBIDDEN, exception.getMessage());
     }
 }

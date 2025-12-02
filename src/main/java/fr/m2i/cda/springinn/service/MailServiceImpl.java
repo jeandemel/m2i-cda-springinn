@@ -1,11 +1,12 @@
 package fr.m2i.cda.springinn.service;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import fr.m2i.cda.springinn.entity.Booking;
 import fr.m2i.cda.springinn.entity.User;
@@ -15,10 +16,12 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class MailServiceImpl implements MailService{
     private JavaMailSender mailSender;
+    private PasswordEncoder encoder;
 
-    public MailServiceImpl(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    @Value("${server.url}")
+    private String serverUrl;
+    @Value("${mail.validation.secret}")
+    private String validationSecret;
 
     @Override
     public void sendExample() {
@@ -70,10 +73,16 @@ We are sorry but you're booking for %s persons on the %s for %s days can't be ho
 
     @Override
     public void sendEmailValidation(User user) {
-        String link = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() + "/api/account/validate/"+user.getId();
+        String hash = encoder.encode(user.getId()+validationSecret);
+        String link = serverUrl+"/api/account/validate/"+user.getId()+"/"+hash;
          sendMail(user.getEmail(),"SpringInn - Email Validation", """
 Please follow <a href="%s">this link</a> to validate your email.
                 """.formatted(link));
+    }
+
+    public MailServiceImpl(JavaMailSender mailSender, PasswordEncoder encoder) {
+        this.mailSender = mailSender;
+        this.encoder = encoder;
     }
 
 

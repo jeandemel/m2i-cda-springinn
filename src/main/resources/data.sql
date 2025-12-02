@@ -1,6 +1,6 @@
-INSERT INTO usertable (id,email,password,role) VALUES ('user1', 'admin@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_ADMIN');
-INSERT INTO usertable (id,email,password,role) VALUES ('user2', 'customer@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_CUSTOMER');
-INSERT INTO usertable (id,email,password,role) VALUES ('user3', 'customer2@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_CUSTOMER');
+INSERT INTO usertable (id,email,password,role,active) VALUES ('user1', 'admin@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_ADMIN',true);
+INSERT INTO usertable (id,email,password,role,active) VALUES ('user2', 'customer@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_CUSTOMER',true);
+INSERT INTO usertable (id,email,password,role,active) VALUES ('user3', 'customer2@test.com', '$2a$10$r53yPdAQAGaaYD00pAbPreRy68oMRc97XNDz352WLy4EuutIz4VhK', 'ROLE_CUSTOMER',false);
 
 INSERT INTO customer (id, address,first_name,name,phone_number) VALUES ('user2', '30 rue machin, Lyon', 'FirstName1', 'Name1', '0123456789');
 INSERT INTO customer (id, address,first_name,name,phone_number) VALUES ('user3', '45 avenue truc, Vénissieux', 'FirstName2', 'Name2', '0663945423');

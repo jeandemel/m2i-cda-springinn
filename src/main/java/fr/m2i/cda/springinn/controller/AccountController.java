@@ -28,15 +28,16 @@ public class AccountController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public SimpleCustomerDTO registerUser(@RequestBody @Valid RegisterCustomerDTO dto) {
         Customer created = accountBusiness.register(mapper.toEntity(dto));
         return mapper.toSimpleCustomer(created);
     }
 
-    @GetMapping("/validate/{id}")
+    @GetMapping("/validate/{id}/{hash}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void activateAccount(@PathVariable String id) {
-        accountBusiness.activateAccount(id);
+    public void activateAccount(@PathVariable String id, @PathVariable String hash) {
+        accountBusiness.activateAccount(id,hash);
     }
 
 }

@@ -1,9 +1,11 @@
 package fr.m2i.cda.springinn.business.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.m2i.cda.springinn.business.CustomerAccountBusiness;
+import fr.m2i.cda.springinn.business.exception.AccountValidationException;
 import fr.m2i.cda.springinn.business.exception.UserAlreadyExistException;
 import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.User;
@@ -15,6 +17,8 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
     private UserRepository userRepo;
     private PasswordEncoder passwordEncoder;
     private MailService mailService;
+    @Value("${mail.validation.secret}")
+    private String validationSecret;
 
     public CustomerAccountBusinessImpl(UserRepository userRepo, PasswordEncoder passwordEncoder,
             MailService mailService) {
@@ -39,8 +43,10 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
     }
 
     @Override
-    public void activateAccount(String id) {
-        
+    public void activateAccount(String id, String hash) {
+        if(!passwordEncoder.matches(id+validationSecret, hash)) {
+            throw new AccountValidationException();
+        }
         User user = userRepo.findById(id).orElseThrow();
         user.setActive(true);
         userRepo.save(user);

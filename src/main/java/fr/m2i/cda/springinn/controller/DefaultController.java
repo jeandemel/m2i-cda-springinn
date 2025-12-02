@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.m2i.cda.springinn.entity.User;
 import fr.m2i.cda.springinn.service.MailService;
 
 @RestController
@@ -23,7 +24,10 @@ public class DefaultController {
 
     @GetMapping("/test-mail")
     public String sendTestMail() {
-        mailService.sendExample();
+        User user = new User();
+        user.setEmail("customer2@test.com");
+        user.setId("user3");
+        mailService.sendEmailValidation(user);
         return "Mail sent";
     }
 }
