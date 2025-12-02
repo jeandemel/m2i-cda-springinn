@@ -24,6 +24,7 @@ import fr.m2i.cda.springinn.entity.Booking;
 import fr.m2i.cda.springinn.entity.Room;
 import fr.m2i.cda.springinn.repository.BookingRepository;
 import fr.m2i.cda.springinn.repository.RoomRepository;
+import fr.m2i.cda.springinn.service.MailService;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingBusinessImplTest {
@@ -31,6 +32,8 @@ public class BookingBusinessImplTest {
     RoomRepository roomRepo;
     @Mock
     BookingRepository bookingRepo;
+    @Mock
+    MailService mailService;
     @InjectMocks
     BookingBusinessImpl instance;
 

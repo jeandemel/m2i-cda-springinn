@@ -1,5 +1,8 @@
 package fr.m2i.cda.springinn.business.impl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +47,8 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
 
     @Override
     public void activateAccount(String id, String hash) {
-        if(!passwordEncoder.matches(id+validationSecret, hash)) {
+        String decoded = new String(Base64.getUrlDecoder().decode(hash), StandardCharsets.UTF_8);
+        if(!passwordEncoder.matches(id+validationSecret, decoded)) {
             throw new AccountValidationException();
         }
         User user = userRepo.findById(id).orElseThrow();

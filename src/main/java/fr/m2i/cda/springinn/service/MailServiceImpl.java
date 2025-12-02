@@ -1,6 +1,8 @@
 package fr.m2i.cda.springinn.service;
 
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,8 +20,8 @@ public class MailServiceImpl implements MailService{
     private JavaMailSender mailSender;
     private PasswordEncoder encoder;
 
-    @Value("${server.url}")
-    private String serverUrl;
+    @Value("${frontend.url}")
+    private String frontendUrl;
     @Value("${mail.validation.secret}")
     private String validationSecret;
 
@@ -73,8 +75,8 @@ We are sorry but you're booking for %s persons on the %s for %s days can't be ho
 
     @Override
     public void sendEmailValidation(User user) {
-        String hash = encoder.encode(user.getId()+validationSecret);
-        String link = serverUrl+"/api/account/validate/"+user.getId()+"/"+hash;
+        String hash = Base64.getUrlEncoder().encodeToString( encoder.encode(user.getId()+validationSecret).getBytes());
+        String link = frontendUrl+"/register/validate?id="+user.getId()+"&hash="+hash;
          sendMail(user.getEmail(),"SpringInn - Email Validation", """
 Please follow <a href="%s">this link</a> to validate your email.
                 """.formatted(link));

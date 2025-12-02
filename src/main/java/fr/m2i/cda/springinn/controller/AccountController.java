@@ -34,7 +34,7 @@ public class AccountController {
         return mapper.toSimpleCustomer(created);
     }
 
-    @GetMapping("/validate/{id}/{hash}")
+    @PostMapping("/validate/{id}/{hash}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void activateAccount(@PathVariable String id, @PathVariable String hash) {
         accountBusiness.activateAccount(id,hash);

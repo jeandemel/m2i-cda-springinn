@@ -408,3 +408,20 @@ Alternative :
 Bonus si vous voulez faire une validation de mail plus secure : 
 Rajouter une variable mail.validation.secret dans le application.properties avec une chaine de caractère random dedans. Dans le MailService.sendEmailValidation, on prend l'id du user, on le concatène à la variable mail.validation.secret qu'on récupère des properties et on passe le tout dans un PasswordEncoder.encode.
 On modifie le activateAccount pour y ajouter un String hash en plus du String id et dedans on vient utiliser le PasswordEncoder pour vérifier si l'id concaténé avec le mail.validation.secret correspond au hash récupéré, si oui on active (on modifie aussi la route pour avoir /account/validate/id-user/hash)
+
+
+#### Formulaire d'inscription + page de validation de mail
+1. Côté frontend, créer une nouvelle page src/app/register/page.tsx
+2. Rajouter les types qui nous manquent pour le RegisterCustomer et créer un src/lib/api/account-api.ts avec dedans pour commencer juste la méthode createAccount(customer:RegisterCustomer) qui va faire un post sur notre API
+3. Créer un src/components/feature/account/RegisterForm.tsx avec un formulaire dedans qui attend les différentes infos du DTO et des validateurs là où il en faut
+4. Au submit, on déclenche la méthode createAccount côté front et on met un petit message de feedback
+5. Créer une nouvelle page src/app/register/validate/page.tsx en use client dans lequel on va juste mettre un message indiquant qu'on a bien validé son email et un lien vers le login (qui n'existe pas encore)
+6. Dans le account-api on rajoute une nouvelle méthode validateAccount avec post qui va pointer sur /api/account/validate/id/hash
+7. Dans la page.tsx, on récupère les searchParams id et hash (s'ils existent pas, on met un message d'erreur), on fait un useEffect qui va déclencher un validateAccount en lui donnant ces infos là, et si erreur, on met un message d'erreur aussi
+8. Côté back, on passe la route de validation en POST et dans l'email de validation on va mettre un lien vers la page de notre frontend (et pourquoi pas donc mettre l'url du frontend dans le env.properties, comme ça on enlève le localhost:3000 en dur du SecurityConfig)
+
+
+#### Register validations supplémentaires
+1. Côté backend, créer une nouvelle route/méthode business qui va vérifier si un email est disponible ou non, comme on avait fait pour le room number
+2. Côté frontend, dans le RegisterForm, on fait aussi un peu pareil qu'on avait fait dans le RoomForm pour valider que l'email est dispo ou non
+3. On rajoute également un nouveau champs repeatPassword et on rajoute une validation qui va vérifier s'il match avec le password (possible qu'il faille donc rajouter un champ repeatPassword dans le RegisterCustomer)
