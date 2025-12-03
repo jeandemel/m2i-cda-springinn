@@ -1,6 +1,7 @@
 package fr.m2i.cda.springinn.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import fr.m2i.cda.springinn.controller.dto.RegisterCustomerDTO;
 import fr.m2i.cda.springinn.controller.dto.SimpleCustomerDTO;
 import fr.m2i.cda.springinn.controller.dto.mapper.UserMapper;
 import fr.m2i.cda.springinn.entity.Customer;
+import fr.m2i.cda.springinn.entity.User;
 import jakarta.validation.Valid;
 
 @RestController
@@ -43,5 +45,10 @@ public class AccountController {
     @GetMapping("/available/{email}")
     public Boolean emailAvailable(@PathVariable String email) {
         return accountBusiness.emailAvailable(email);
+    }
+
+    @GetMapping
+    public SimpleCustomerDTO login(@AuthenticationPrincipal User user) {
+        return mapper.toSimpleCustomer(user);
     }
 }
