@@ -433,3 +433,14 @@ On modifie le activateAccount pour y ajouter un String hash en plus du String id
 3. Côté frontend, on crée une nouvelle page /login/page.tsx ainsi qu'un components/feature/account/login-form.tsx
 4. On rajoute la méthode login(email:string,password:string) dans account-api pour faire un GET vers le /api/account, dans les options du get, on donne l'objet auth auquel on donne l'email en username et le password en password (si c'est pas fait, on modifie notre axiosApi pour y ajouter le `withCredentials:true`)
 5. Dans le login-form on fait en sorte d'appeler la méthode login et de faire un console log de son retour
+
+
+#### Le state de login (contexte ?)
+1. Installer la library cookies-next : https://www.npmjs.com/package/cookies-next
+2. Créer un AuthContext en vous inspirant de celui ci : https://gitlab.com/jeandemel-formations/m2i-cda-2025/react-next-rappels/-/blob/main/src/context/UserContext.tsx?ref_type=heads
+3. Le user sera de type SimpleCustomer, on met le provider dans notre app/layout.tsx, et dans le login-form on récupère ce context et on fait un setUser() avec le retour du login()
+4. Dans le AuthContext, on définit une fonction handleSetUser(user:SimpleCustomer) et dans cette fonction on va venir faire un setCookie('user') en mettant dedans un JSON.stringify du user en plus de l'assigner au state
+5. Dans le return du context, on assigne handleSetUser au setUser
+6. On rajoute ensuite un useEffect dans notre context qui va venir vérifier s'il y a un cookie 'user' et si oui l'assigner au state après l'avoir JSON.parse
+7. On vient créer un components/ui/header.tsx dans lequel on déplace notre menu de navigation qui est actuellement dans le layout
+8. On en fait un composant client et on récupère le user du context pour afficher les routes de register/login seulement si on est pas connecté
