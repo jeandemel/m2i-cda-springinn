@@ -425,3 +425,11 @@ On modifie le activateAccount pour y ajouter un String hash en plus du String id
 1. Côté backend, créer une nouvelle route/méthode business qui va vérifier si un email est disponible ou non, comme on avait fait pour le room number
 2. Côté frontend, dans le RegisterForm, on fait aussi un peu pareil qu'on avait fait dans le RoomForm pour valider que l'email est dispo ou non
 3. On rajoute également un nouveau champs repeatPassword et on rajoute une validation qui va vérifier s'il match avec le password (possible qu'il faille donc rajouter un champ repeatPassword dans le RegisterCustomer)
+
+
+#### Le Login
+1. Côté backend, créer une route dans le AccountController sur /api/account en GET qui va récupérer un User user avec le @AuthenticationPrincipal et qui va juste le return sous forme de SimpleCustomerDTO
+2. Dans le SecurityConfig, protéger la route /api/account en GET avec un .authenticated()
+3. Côté frontend, on crée une nouvelle page /login/page.tsx ainsi qu'un components/feature/account/login-form.tsx
+4. On rajoute la méthode login(email:string,password:string) dans account-api pour faire un GET vers le /api/account, dans les options du get, on donne l'objet auth auquel on donne l'email en username et le password en password (si c'est pas fait, on modifie notre axiosApi pour y ajouter le `withCredentials:true`)
+5. Dans le login-form on fait en sorte d'appeler la méthode login et de faire un console log de son retour

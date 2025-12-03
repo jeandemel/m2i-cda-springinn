@@ -40,4 +40,8 @@ public class AccountController {
         accountBusiness.activateAccount(id,hash);
     }
 
+    @GetMapping("/available/{email}")
+    public Boolean emailAvailable(@PathVariable String email) {
+        return accountBusiness.emailAvailable(email);
+    }
 }

@@ -5,14 +5,17 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 
 @Configuration
 public class SecurityConfig {
@@ -21,19 +24,26 @@ public class SecurityConfig {
     private String frontendUrl;
 
     @Bean
-    SecurityFilterChain accessControl(HttpSecurity http) throws Exception{
+    SecurityFilterChain accessControl(HttpSecurity http) throws Exception {
+
+        http.httpBasic(Customizer.withDefaults());
+
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+
+        http.logout(logout -> logout.logoutUrl("/api/logout")
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT)));
+
         http.csrf(csrf -> csrf.disable());
 
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
+        http.authorizeHttpRequests(request -> request.anyRequest().permitAll()
 
-        http.authorizeHttpRequests(request -> 
-            request.anyRequest().permitAll()
-        
         );
 
         return http.build();
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

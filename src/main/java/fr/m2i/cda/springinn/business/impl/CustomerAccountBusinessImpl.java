@@ -56,4 +56,9 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
         userRepo.save(user);
     }
 
+    @Override
+    public boolean emailAvailable(String email) {
+        return userRepo.findByEmail(email).isEmpty();
+    }
+
 }
