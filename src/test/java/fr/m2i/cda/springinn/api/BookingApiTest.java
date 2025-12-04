@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import fr.m2i.cda.springinn.repository.BookingRepository;
@@ -31,6 +33,7 @@ public class BookingApiTest {
     BookingRepository bookingRepo;
 
     @Test
+    @WithUserDetails("customer@test.com")
     void postShouldPersistNewBooking() throws Exception {
         mvc.perform(post("/api/booking")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,6 +55,7 @@ public class BookingApiTest {
     }
 
     @Test
+    @WithUserDetails("customer@test.com")
     void postShouldHaveErrorOnTooManyGuest() throws Exception {
         mvc.perform(post("/api/booking")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -70,6 +74,7 @@ public class BookingApiTest {
     }
 
     @Test
+    @WithUserDetails("customer@test.com")
     void postShouldHaveErrorOnUnavailableRoom() throws Exception {
         mvc.perform(post("/api/booking")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,6 +93,7 @@ public class BookingApiTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void patchConfirmShouldPassConfirmedToTrue() throws Exception {
         mvc.perform(patch("/api/booking/confirm/booking3"))
                 .andExpect(status().isNoContent());
@@ -96,6 +102,7 @@ public class BookingApiTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getShouldReturnAllBookings() throws Exception {
         mvc.perform(get("/api/booking"))
             .andExpect(status().isOk())
@@ -106,6 +113,7 @@ public class BookingApiTest {
     }
     
     @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getShouldReturnAllBookingsAwaitingConfirmation() throws Exception {
         mvc.perform(get("/api/booking?awaitingConfirm=true"))
             .andExpect(status().isOk())
@@ -117,6 +125,7 @@ public class BookingApiTest {
     }
 
      @Test
+    @WithMockUser(roles = {"ADMIN"})
     void deleteShouldRemoveExistingBooking() throws Exception {
         mvc.perform(delete("/api/booking/booking3"))
                 .andExpect(status().isNoContent());

@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import fr.m2i.cda.springinn.entity.User;
@@ -82,5 +83,32 @@ public class AccountApiTest {
         User user = userRepo.findById("user3").orElseThrow();
         
         assertTrue(user.getActive());
+    }
+
+    @Test
+    @WithUserDetails("customer@test.com")
+    void shouldReturnUserAccount() throws Exception {
+        mvc.perform(get("/api/account"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").value("customer@test.com"))
+        .andExpect(jsonPath("$.role").value("ROLE_CUSTOMER"))
+        .andExpect(jsonPath("$.id").value("user2"));
+        
+        
+    }
+
+    @Test
+    void emailAvailableShouldReturnTrueIfAvailableEmail() throws Exception {
+        mvc.perform(get("/api/account/available/test@test.com"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(true));
+
+    }
+    @Test
+    void emailAvailableShouldReturnFalseIfUnAvailableEmail() throws Exception {
+        mvc.perform(get("/api/account/available/customer@test.com"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(false));
+
     }
 }

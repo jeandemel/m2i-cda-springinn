@@ -31,7 +31,7 @@ public class BookingBusinessImpl implements BookingBusiness{
     }
 
     @Override
-    public Booking createBooking(Booking booking) {
+    public Booking createBooking(Booking booking, Customer customer) {
         Integer totalCapacity = 0;
         Double totalPrice = 0.0;
         
@@ -50,11 +50,8 @@ public class BookingBusinessImpl implements BookingBusiness{
         }
         booking.setTotal(totalPrice);
         booking.setConfirmed(false);
-        //TODO : modifier par le user actuellement connecté
-        Customer fakeCustomer =  new Customer();
-        fakeCustomer.setId("user2");
-        fakeCustomer.setEmail("customer@test.com");
-        booking.setCustomer(fakeCustomer);
+       
+        booking.setCustomer(customer);
         bookingRepo.save(booking);
         mailService.sendBookingCreation(booking);
         return booking;

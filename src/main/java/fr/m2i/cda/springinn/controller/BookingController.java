@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,6 +22,7 @@ import fr.m2i.cda.springinn.controller.dto.CreateBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.DisplayBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.mapper.BookingMapper;
 import fr.m2i.cda.springinn.entity.Booking;
+import fr.m2i.cda.springinn.entity.Customer;
 import jakarta.validation.Valid;
 
 @RestController
@@ -51,9 +53,9 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DisplayBookingDTO addBooking(@RequestBody @Valid CreateBookingDTO dto) {
+    public DisplayBookingDTO addBooking(@RequestBody @Valid CreateBookingDTO dto, @AuthenticationPrincipal Customer customer) {
         Booking toAdd = bookingMapper.toEntity(dto);
-        return bookingMapper.toDisplay(bookingBusiness.createBooking(toAdd));
+        return bookingMapper.toDisplay(bookingBusiness.createBooking(toAdd, customer));
     }
 
     @PatchMapping("/confirm/{id}")

@@ -444,3 +444,11 @@ On modifie le activateAccount pour y ajouter un String hash en plus du String id
 6. On rajoute ensuite un useEffect dans notre context qui va venir vérifier s'il y a un cookie 'user' et si oui l'assigner au state après l'avoir JSON.parse
 7. On vient créer un components/ui/header.tsx dans lequel on déplace notre menu de navigation qui est actuellement dans le layout
 8. On en fait un composant client et on récupère le user du context pour afficher les routes de register/login seulement si on est pas connecté
+
+
+#### Protection des routes + assignation au user connecté
+1. Modifier le BookingBusiness pour faire que le createBooking attende un Customer en plus du Booking et dans l'implémentation on fait en sorte d'assigner le customer au au booking
+2. Protéger les routes comme suit : creation de booking avoir le ROLE_CUSTOMER, confirmation du booking/suppression du booking/lister les bookings avoir le ROLE_ADMIN, tout ce qui concerne les Room qui n'est pas un GET avoir le ROLE_ADMIN
+3. Côté frontend on vient rajouter une fonction logout() dans notre account-api qui va faire un post vers /api/logout
+4. On crée un src/components/features/account/logout-button.tsx dans lequel on fait un composant client qui onClick va appeler cette fonction logout puis faire un setUser(undefined) sur le AuthContext
+5. On modifie le HeaderMenu pour ajouter le LogoutButton si on est connecté et en se basant sur le rôle du user connecté on affiche ou non le menu admin

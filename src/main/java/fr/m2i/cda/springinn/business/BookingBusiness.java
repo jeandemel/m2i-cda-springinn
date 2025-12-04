@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import fr.m2i.cda.springinn.entity.Booking;
+import fr.m2i.cda.springinn.entity.Customer;
 
 public interface BookingBusiness {
     /**
@@ -12,7 +13,7 @@ public interface BookingBusiness {
      * @param booking Le booking à persister
      * @return Le booking persisté non confirmé par l'administrateur
      */
-    Booking createBooking(Booking booking);
+    Booking createBooking(Booking booking, Customer customer);
     /**
      * Méthode pour confirmer une réservation
      * @param id L'id du booking à confirmer

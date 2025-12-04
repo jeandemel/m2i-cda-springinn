@@ -40,6 +40,10 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(request -> request
             .requestMatchers(HttpMethod.GET, "/api/account").authenticated()
+            .requestMatchers(HttpMethod.POST, "/api/booking").hasRole("CUSTOMER")
+            .requestMatchers("/api/booking/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/room/**").permitAll()
+            .requestMatchers("/api/room/**").hasRole("ADMIN")
             .anyRequest().permitAll()
 
         );

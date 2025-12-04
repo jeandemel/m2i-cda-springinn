@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import fr.m2i.cda.springinn.business.exception.InvalidBookingCapacityException;
 import fr.m2i.cda.springinn.business.exception.RoomUnavailableException;
 import fr.m2i.cda.springinn.entity.Booking;
+import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.Room;
 import fr.m2i.cda.springinn.repository.BookingRepository;
 import fr.m2i.cda.springinn.repository.RoomRepository;
@@ -39,6 +40,7 @@ public class BookingBusinessImplTest {
 
     Room forTotalAndCapacity = new Room();
     List<Room> availableRooms;
+    Customer customer;
     @BeforeEach
     void setUp() {
         Room firstAvailable = new Room();
@@ -50,7 +52,9 @@ public class BookingBusinessImplTest {
 
         forTotalAndCapacity.setPrice(10.0);
         forTotalAndCapacity.setCapacity(2);
-
+        customer = new Customer();
+        customer.setId("test-customer");
+        customer.setEmail("test@test.com");
     }
 
     @Test
@@ -62,7 +66,7 @@ public class BookingBusinessImplTest {
         testBooking.setGuestCount(15);
         testBooking.setDuration(2);
         testBooking.setRooms(availableRooms);
-        assertThrows(InvalidBookingCapacityException.class, () -> instance.createBooking(testBooking));
+        assertThrows(InvalidBookingCapacityException.class, () -> instance.createBooking(testBooking, customer));
     }
     
     @Test
@@ -78,7 +82,7 @@ public class BookingBusinessImplTest {
         testBooking.setDuration(2);
         testBooking.setGuestCount(1);
         testBooking.setRooms(List.of(unavailableRoom));
-        assertThrows(RoomUnavailableException.class, () -> instance.createBooking(testBooking));
+        assertThrows(RoomUnavailableException.class, () -> instance.createBooking(testBooking, customer));
     }
 
     
@@ -93,7 +97,7 @@ public class BookingBusinessImplTest {
         testBooking.setRooms(availableRooms);
         testBooking.setDuration(2);
 
-        instance.createBooking(testBooking);
+        instance.createBooking(testBooking, customer);
         assertEquals(40.0, testBooking.getTotal());
         assertFalse(testBooking.getConfirmed());
         verify(bookingRepo, times(1)).save(testBooking);
