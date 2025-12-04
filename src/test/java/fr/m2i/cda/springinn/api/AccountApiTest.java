@@ -111,4 +111,16 @@ public class AccountApiTest {
         .andExpect(jsonPath("$").value(false));
 
     }
+
+    @Test
+    @WithUserDetails("customer@test.com")
+    void shouldReturnCustomerBookings() throws Exception {
+        mvc.perform(get("/api/account/bookings"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].id").value("booking1"))
+        .andExpect(jsonPath("$[1].id").value("booking2"));
+        
+        
+    }
 }

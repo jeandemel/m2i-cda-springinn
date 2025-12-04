@@ -2,6 +2,7 @@ package fr.m2i.cda.springinn.business.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 import fr.m2i.cda.springinn.business.CustomerAccountBusiness;
 import fr.m2i.cda.springinn.business.exception.AccountValidationException;
 import fr.m2i.cda.springinn.business.exception.UserAlreadyExistException;
+import fr.m2i.cda.springinn.entity.Booking;
 import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.User;
+import fr.m2i.cda.springinn.repository.BookingRepository;
 import fr.m2i.cda.springinn.repository.UserRepository;
 import fr.m2i.cda.springinn.service.MailService;
 
@@ -22,12 +25,15 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
     private MailService mailService;
     @Value("${mail.validation.secret}")
     private String validationSecret;
+    private BookingRepository bookingRepo;
+
 
     public CustomerAccountBusinessImpl(UserRepository userRepo, PasswordEncoder passwordEncoder,
-            MailService mailService) {
+            MailService mailService, BookingRepository bookingRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
+        this.bookingRepo = bookingRepo;
     }
 
     @Override
@@ -59,6 +65,14 @@ public class CustomerAccountBusinessImpl implements CustomerAccountBusiness{
     @Override
     public boolean emailAvailable(String email) {
         return userRepo.findByEmail(email).isEmpty();
+    }
+
+    @Override
+    public List<Booking> customerBookings(Customer customer) {
+        
+        // Customer storedCustomer = (Customer) userRepo.findById(customer.getId()).orElseThrow();
+        // return storedCustomer.getBookings();
+        return bookingRepo.findByCustomer(customer);
     }
 
 }

@@ -1,5 +1,7 @@
 package fr.m2i.cda.springinn.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.m2i.cda.springinn.business.CustomerAccountBusiness;
+import fr.m2i.cda.springinn.controller.dto.DisplayBookingDTO;
 import fr.m2i.cda.springinn.controller.dto.RegisterCustomerDTO;
 import fr.m2i.cda.springinn.controller.dto.SimpleCustomerDTO;
+import fr.m2i.cda.springinn.controller.dto.mapper.BookingMapper;
 import fr.m2i.cda.springinn.controller.dto.mapper.UserMapper;
 import fr.m2i.cda.springinn.entity.Customer;
 import fr.m2i.cda.springinn.entity.User;
@@ -22,10 +26,13 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/account")
 public class AccountController {
     private UserMapper mapper;
+    private BookingMapper bookingMapper;
     private CustomerAccountBusiness accountBusiness;
 
-    public AccountController(UserMapper mapper, CustomerAccountBusiness accountBusiness) {
+
+    public AccountController(UserMapper mapper, BookingMapper bookingMapper, CustomerAccountBusiness accountBusiness) {
         this.mapper = mapper;
+        this.bookingMapper = bookingMapper;
         this.accountBusiness = accountBusiness;
     }
 
@@ -50,5 +57,12 @@ public class AccountController {
     @GetMapping
     public SimpleCustomerDTO login(@AuthenticationPrincipal User user) {
         return mapper.toSimpleCustomer(user);
+    }
+
+    @GetMapping("/bookings")
+    public List<DisplayBookingDTO> getAccountBookings(@AuthenticationPrincipal Customer customer) {
+        return accountBusiness.customerBookings(customer)
+        .stream().map(bookingMapper::toDisplay)
+        .toList();
     }
 }

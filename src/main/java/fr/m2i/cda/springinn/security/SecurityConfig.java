@@ -39,7 +39,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http.authorizeHttpRequests(request -> request
-            .requestMatchers(HttpMethod.GET, "/api/account").authenticated()
+            .requestMatchers(HttpMethod.GET, "/api/account/**").authenticated()
             .requestMatchers(HttpMethod.POST, "/api/booking").hasRole("CUSTOMER")
             .requestMatchers("/api/booking/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/room/**").permitAll()

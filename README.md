@@ -393,6 +393,8 @@ Alternative :
 3. Implémenter les 3 méthodes pour envoyer des mail de confirmation selon les événement en récupérant l'email dans le customer du booking et quelques informations dans le booking aussi pour le mettre dans le mail
 4. Dans le BookingBusiness, rajouter le MailService dans les injections et faire en sorte d'envoyer un mail quand on crée le booking, quand on le confirme ou quand on le delete
 
+### Authentification
+
 #### Inscription Customer
 1. Modifier l'entité User pour y ajouter une propriété active en Boolean et implémenter l'interface UserDetails pour laquelle on va venir mettre les méthode obligatoire ainsi que le isEnabled qui se basera sur la propriété active (en gros par défaut ça sera false et on le passera à true une fois l'email validé)
 2. Créer le UserRepository avec le findByEmail ainsi que le security.UserService qui va implémenter le UserDetailsService et son loadByUserByUsername dans lequel on lance le findByEmail
@@ -452,3 +454,11 @@ On modifie le activateAccount pour y ajouter un String hash en plus du String id
 3. Côté frontend on vient rajouter une fonction logout() dans notre account-api qui va faire un post vers /api/logout
 4. On crée un src/components/features/account/logout-button.tsx dans lequel on fait un composant client qui onClick va appeler cette fonction logout puis faire un setUser(undefined) sur le AuthContext
 5. On modifie le HeaderMenu pour ajouter le LogoutButton si on est connecté et en se basant sur le rôle du user connecté on affiche ou non le menu admin
+
+#### Page Mon Compte + mes réservations
+1. Côté backend, dans le CustomerAccountBusiness, rajouter une méthode customerBookings(Customer customer) qui va renvoyer une List<Booking>
+2. On peut faire une méthode dans le BookingRepository qui récupère les bookings d'un customer spécifique, ou un findBy(Example) ou même récupérer le Customer avec le repo et faire un getBookings
+3. Rajouter un Get dans le AccountController sur /api/account/bookings et convertir en DisplayBookingDTO.
+4. Côté frontend, on crée une nouvelle page account/page.tsx accessible seulement si connecté dans le menu et on créer 2 components, un AccountInfo et un AccountBookings
+5. Dans AccountInfo on vient récupérer le AuthContext et on affiche les informations du User
+6. Dans AccoutBookings, on vient faire une requête vers /api/account/bookings dans un useEffect et on affiche les bookings sous forme de antdesign Collapse
