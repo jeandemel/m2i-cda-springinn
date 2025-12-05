@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import fr.m2i.cda.springinn.entity.User;
 import fr.m2i.cda.springinn.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -35,7 +35,7 @@ public class AccountApiTest {
 
     @Test
     void postShouldPersistNewCustomer() throws Exception {
-        mvc.perform(post("/api/account")
+        mvc.perform(post("/api/account").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             {
@@ -58,7 +58,7 @@ public class AccountApiTest {
 
     @Test
     void postShouldNotPersistOnEmailTaken() throws Exception {
-        mvc.perform(post("/api/account")
+        mvc.perform(post("/api/account").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             {
@@ -75,7 +75,7 @@ public class AccountApiTest {
 
     @Test
     void shouldActivateUser() throws Exception {
-        mvc.perform(post("/api/account/validate/user3/JDJhJDEwJFNXeGtjdWFGdjN6UGM5RjdJVjUvcC5rNmlUOS9oV2oxRy5ZbGQxVjZ5V1VSLkJEeVZITnF1"))
+        mvc.perform(post("/api/account/validate/user3/JDJhJDEwJFNXeGtjdWFGdjN6UGM5RjdJVjUvcC5rNmlUOS9oV2oxRy5ZbGQxVjZ5V1VSLkJEeVZITnF1").with(csrf()))
         .andExpect(status().isNoContent());
 
         
@@ -102,6 +102,7 @@ public class AccountApiTest {
         mvc.perform(get("/api/account/available/test@test.com"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").value(true));
+        
 
     }
     @Test

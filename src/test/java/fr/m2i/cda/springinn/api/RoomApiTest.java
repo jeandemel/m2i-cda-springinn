@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 import jakarta.transaction.Transactional;
 
@@ -67,7 +68,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
    void postShouldPersistNewRoom() throws Exception {
-        mvc.perform(post("/api/room")
+        mvc.perform(post("/api/room").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
@@ -83,7 +84,7 @@ public class RoomApiTest {
    @Test
     @WithMockUser(roles = {"ADMIN"})
    void postShouldDisplayErrorOnExistingRoomNumber() throws Exception {
-        mvc.perform(post("/api/room")
+        mvc.perform(post("/api/room").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
@@ -98,7 +99,7 @@ public class RoomApiTest {
    @Test
     @WithMockUser(roles = {"ADMIN"})
    void postShouldDisplayValidationErrors() throws Exception {
-        mvc.perform(post("/api/room")
+        mvc.perform(post("/api/room").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
@@ -142,7 +143,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void deleteShouldThrow404IfNoRoom() throws Exception {
-        mvc.perform(delete("/api/room/room100"))
+        mvc.perform(delete("/api/room/room100").with(csrf()))
         .andExpect(status().isNotFound());
 
     }
@@ -150,7 +151,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void patchShouldThrow404IfNoRoom() throws Exception {
-        mvc.perform(patch("/api/room/room100")
+        mvc.perform(patch("/api/room/room100").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
@@ -167,7 +168,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void deleteShouldNotThrow() throws Exception {
-        mvc.perform(delete("/api/room/room1"))
+        mvc.perform(delete("/api/room/room1").with(csrf()))
         .andExpect(status().isNoContent());
 
     }
@@ -175,7 +176,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void patchShouldNotThrow() throws Exception {
-        mvc.perform(patch("/api/room/room1")
+        mvc.perform(patch("/api/room/room1").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {
@@ -190,7 +191,7 @@ public class RoomApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void patchShouldThrowIfExistingNumber() throws Exception {
-        mvc.perform(patch("/api/room/room1")
+        mvc.perform(patch("/api/room/room1").with(csrf())
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
             {

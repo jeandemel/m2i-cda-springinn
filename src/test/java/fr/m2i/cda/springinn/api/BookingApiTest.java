@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 import fr.m2i.cda.springinn.repository.BookingRepository;
 import jakarta.transaction.Transactional;
@@ -35,7 +36,7 @@ public class BookingApiTest {
     @Test
     @WithUserDetails("customer@test.com")
     void postShouldPersistNewBooking() throws Exception {
-        mvc.perform(post("/api/booking")
+        mvc.perform(post("/api/booking").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             {
@@ -57,7 +58,7 @@ public class BookingApiTest {
     @Test
     @WithUserDetails("customer@test.com")
     void postShouldHaveErrorOnTooManyGuest() throws Exception {
-        mvc.perform(post("/api/booking")
+        mvc.perform(post("/api/booking").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             {
@@ -76,7 +77,7 @@ public class BookingApiTest {
     @Test
     @WithUserDetails("customer@test.com")
     void postShouldHaveErrorOnUnavailableRoom() throws Exception {
-        mvc.perform(post("/api/booking")
+        mvc.perform(post("/api/booking").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                             {
@@ -95,7 +96,7 @@ public class BookingApiTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void patchConfirmShouldPassConfirmedToTrue() throws Exception {
-        mvc.perform(patch("/api/booking/confirm/booking3"))
+        mvc.perform(patch("/api/booking/confirm/booking3").with(csrf()))
                 .andExpect(status().isNoContent());
 
         assertTrue(bookingRepo.findById("booking3").get().getConfirmed());
@@ -127,7 +128,7 @@ public class BookingApiTest {
      @Test
     @WithMockUser(roles = {"ADMIN"})
     void deleteShouldRemoveExistingBooking() throws Exception {
-        mvc.perform(delete("/api/booking/booking3"))
+        mvc.perform(delete("/api/booking/booking3").with(csrf()))
                 .andExpect(status().isNoContent());
 
         assertTrue(bookingRepo.findById("booking3").isEmpty());
