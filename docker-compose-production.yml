@@ -1,3 +1,5 @@
+
+#Exemple de fichier de mise en production via docker compose qui utilise l'image publiée sur docker hub
 services:
  
   app:

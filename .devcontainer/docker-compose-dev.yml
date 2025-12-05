@@ -7,7 +7,7 @@ services:
       - .:/app
     command: sleep infinity
     environment:
-      - MAIL_VALIDATION_SECRET=bloup
+      - MAIL_VALIDATION_SECRET=qspdoifazoefnqsmlkjcncqsmdnfqmsl
       - FRONTEND_URL=http://localhost:3000 
       - DATABASE_CREATE=create
       - SQL_INIT_MODE=always
