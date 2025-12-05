@@ -1,0 +1,31 @@
+services:
+ 
+  app:
+    
+    image: jeandemel/springinn:v1
+    ports:
+      - 8080:8000
+    environment:
+      - MAIL_VALIDATION_SECRET=bloup
+      - FRONTEND_URL=http://localhost:3000 
+      - DATABASE_CREATE=update
+      - SQL_INIT_MODE=never
+      - MAILSERVER_HOST=mailserver
+      - MAILSERVER_PORT=1025
+      - DATABASE_URL=jdbc:mariadb://database:3306/springinn?user=dev&password=1234
+    depends_on:
+      database:  
+        condition: service_healthy
+  database:
+    image: mariadb:lts
+    environment:
+      - MARIADB_DATABASE=springinn
+      - MARIADB_USER=dev
+      - MARIADB_PASSWORD=1234
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3

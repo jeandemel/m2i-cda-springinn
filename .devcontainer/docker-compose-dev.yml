@@ -6,6 +6,14 @@ services:
     volumes:
       - .:/app
     command: sleep infinity
+    environment:
+      - MAIL_VALIDATION_SECRET=bloup
+      - FRONTEND_URL=http://localhost:3000 
+      - DATABASE_CREATE=create
+      - SQL_INIT_MODE=always
+      - MAILSERVER_HOST=mailserver
+      - MAILSERVER_PORT=1025
+      - DATABASE_URL=jdbc:mariadb://database:3306/springinn?user=dev&password=1234
   
   mailserver:
     image: maildev/maildev
