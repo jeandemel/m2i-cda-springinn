@@ -15,10 +15,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import fr.m2i.cda.springinn.entity.User;
 import fr.m2i.cda.springinn.repository.UserRepository;
+import fr.m2i.cda.springinn.service.MailService;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
@@ -31,6 +33,8 @@ public class AccountApiTest {
     MockMvc mvc;
     @Autowired
     UserRepository userRepo;
+    @MockitoBean
+    MailService mailService;
 
 
     @Test

@@ -16,10 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 import fr.m2i.cda.springinn.repository.BookingRepository;
+import fr.m2i.cda.springinn.service.MailService;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
@@ -32,6 +34,8 @@ public class BookingApiTest {
     MockMvc mvc;
     @Autowired
     BookingRepository bookingRepo;
+    @MockitoBean
+    MailService mailService;
 
     @Test
     @WithUserDetails("customer@test.com")
