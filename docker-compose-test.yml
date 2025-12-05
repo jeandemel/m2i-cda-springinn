@@ -6,6 +6,7 @@ services:
     volumes:
       - .:/app
     command: ./mvnw test
+    working_dir: /app
     environment:
       - MAIL_VALIDATION_SECRET=qspdoifazoefnqsmlkjcncqsmdnfqmsl
       - FRONTEND_URL=http://localhost:3000 
